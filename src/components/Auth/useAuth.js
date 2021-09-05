@@ -33,7 +33,7 @@ const useAuth = () => {
       const data = await loginAuth(payload)
       dispatch(loginSuccess(data))
       if (data.success) {
-        history.push('/dashboard')
+        history.push('/')
       }
     } catch (error) {
       console.log(error, 'error')

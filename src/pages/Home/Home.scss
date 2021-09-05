@@ -1,0 +1,18 @@
+.nav-header {
+  justify-content: space-between;
+
+  &__menu {
+    display: flex;
+    align-items: center;
+
+    .user-name {
+      margin-right: 5px;
+    }
+
+    .user-logout {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+  }
+}

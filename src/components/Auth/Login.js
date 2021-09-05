@@ -1,8 +1,18 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { object, string } from 'yup'
 import { TextField, Button } from '@material-ui/core'
 import { Formik } from 'formik'
+import Select from 'react-select'
+import { Alert } from '@material-ui/lab'
+import CloseIcon from '@material-ui/icons/Close'
+import { IconButton, Slide } from '@material-ui/core'
 
+import {
+  getProfileRequest,
+  getProfileSuccess,
+  getProfileFail,
+} from '../../actions/profileAction'
+import { getProfile } from '../../api/profileAPI'
 import { useAppContext } from '../../AppContext'
 import useAuth from './useAuth'
 import { isEmpty } from '../../helpers'
@@ -23,9 +33,39 @@ const Schema = object().shape({
 })
 
 const Login = () => {
+  const formRef = useRef()
+  const [showAlert, setShowAlert] = useState({})
   const {
-    data: { auth },
+    data: {
+      auth,
+      profile: {
+        get: { data: profileData = {}, loading, fail },
+      },
+    },
+    dispatch,
   } = useAppContext()
+
+  const profileOptions =
+    profileData?.map(item => ({
+      value: item.email,
+      label: item.name,
+    })) || []
+
+  const getProfileList = async () => {
+    dispatch(getProfileRequest())
+
+    try {
+      const res = await getProfile()
+      dispatch(getProfileSuccess(res.data))
+    } catch (err) {
+      dispatch(getProfileFail(err.response.data.message || err.message))
+
+      setShowAlert({
+        type: 'error',
+        message: err.response.data.message,
+      })
+    }
+  }
 
   const { submitLogin } = useAuth()
 
@@ -33,12 +73,24 @@ const Login = () => {
     submitLogin(values)
   }
 
+  const handleChangeName = option => {
+    const { setFieldValue } = formRef.current
+    if (option) {
+      setFieldValue('email', option.value)
+    }
+  }
+
+  useEffect(() => {
+    getProfileList()
+  }, [])
+
   return (
     <>
       <Formik
         onSubmit={handleSubmitLogin}
         initialValues={{ email: '', password: '' }}
         validationSchema={Schema}
+        innerRef={formRef}
       >
         {({
           handleSubmit,
@@ -57,6 +109,20 @@ const Login = () => {
           return (
             <form onSubmit={handleSubmit}>
               <div>
+                <Select
+                  className="basic-single"
+                  classNamePrefix="select"
+                  placeholder="Please select your name"
+                  isDisabled={loading}
+                  isLoading={loading}
+                  isClearable={true}
+                  isSearchable={true}
+                  name="color"
+                  options={profileOptions}
+                  onChange={handleChangeName}
+                />
+              </div>
+              {/* <div>
                 <TextField
                   fullWidth
                   error={checkError('email')}
@@ -69,7 +135,7 @@ const Login = () => {
                   onBlur={handleBlur}
                   margin="dense"
                 />
-              </div>
+              </div> */}
               <div>
                 <TextField
                   fullWidth
@@ -101,6 +167,34 @@ const Login = () => {
           )
         }}
       </Formik>
+      {showAlert.type && (
+        <Slide
+          direction="left"
+          in={!!showAlert.type}
+          mountOnEnter
+          unmountOnExit
+        >
+          <Alert
+            className="product-alert"
+            severity={showAlert.type}
+            color={showAlert.type}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setShowAlert({})
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            {fail}
+          </Alert>
+        </Slide>
+      )}
       <h3>{auth?.data?.error_message || auth?.fail}</h3>
     </>
   )

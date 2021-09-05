@@ -23,8 +23,10 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    console.log(error.response.data, 'error')
-    if (error.response.data.message === 'Auth failed') {
+    if (
+      error.response.data.message === 'Auth failed' ||
+      error.response.data.error_code === 'permission_denied'
+    ) {
       setTimeout(async () => {
         window.location.href = '/login'
       }, 500)

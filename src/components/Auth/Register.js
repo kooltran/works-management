@@ -1,15 +1,25 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { Formik } from 'formik'
 import { object, string } from 'yup'
+import Select from 'react-select'
+import { Alert } from '@material-ui/lab'
+import CloseIcon from '@material-ui/icons/Close'
+import { IconButton, Slide } from '@material-ui/core'
 
+import {
+  getProfileRequest,
+  getProfileSuccess,
+  getProfileFail,
+} from '../../actions/profileAction'
+import { getProfile } from '../../api/profileAPI'
 import { isEmpty } from '../../helpers'
 import { useAppContext } from '../../AppContext'
 
 import useAuth from './useAuth'
 
 const Schema = object().shape({
-  name: string().required().min(6, 'Name must be at least 6 characters'),
+  // name: string().required().min(6, 'Name must be at least 6 characters'),
   email: string()
     .matches(
       /^[a-zA-Z0-9!#$%&''*+/=?^_`{}~@."\-\s]*$/,
@@ -25,9 +35,40 @@ const Schema = object().shape({
 })
 
 const Register = () => {
+  const [showAlert, setShowAlert] = useState({})
+  const formRef = useRef()
+
   const {
-    data: { auth },
+    data: {
+      auth,
+      profile: {
+        get: { data: profileData = {}, loading, fail },
+      },
+    },
+    dispatch,
   } = useAppContext()
+
+  const profileOptions =
+    profileData?.map(item => ({
+      value: item.email,
+      label: item.name,
+    })) || []
+
+  const getProfileList = async () => {
+    dispatch(getProfileRequest())
+
+    try {
+      const res = await getProfile()
+      dispatch(getProfileSuccess(res.data))
+    } catch (err) {
+      dispatch(getProfileFail(err.response.data.message || err.message))
+
+      setShowAlert({
+        type: 'error',
+        message: err.response.data.message,
+      })
+    }
+  }
 
   const { submitRegister } = useAuth()
 
@@ -35,12 +76,25 @@ const Register = () => {
     submitRegister(values)
   }
 
+  const handleChangeName = option => {
+    const { setFieldValue } = formRef.current
+    if (option) {
+      setFieldValue('email', option.value)
+      setFieldValue('name', option.label)
+    }
+  }
+
+  useEffect(() => {
+    getProfileList()
+  }, [])
+
   return (
     <>
       <Formik
         onSubmit={handleSubmitRegister}
         initialValues={{ email: '', password: '' }}
         validationSchema={Schema}
+        innerRef={formRef}
       >
         {({
           handleSubmit,
@@ -58,31 +112,17 @@ const Register = () => {
           return (
             <form onSubmit={handleSubmit}>
               <div>
-                <TextField
-                  fullWidth
-                  error={checkError('name')}
-                  id="input-name"
-                  name="name"
-                  label="Name"
-                  defaultValue=""
-                  helperText={touched.name && errors.name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  margin="dense"
-                />
-              </div>
-              <div>
-                <TextField
-                  fullWidth
-                  error={checkError('email')}
-                  id="input-email"
+                <Select
+                  className="basic-single"
+                  classNamePrefix="select"
+                  placeholder="Please select your name"
+                  isDisabled={loading}
+                  isLoading={loading}
+                  isClearable={true}
+                  isSearchable={true}
                   name="email"
-                  label="Email"
-                  defaultValue=""
-                  helperText={touched.email && errors.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  margin="dense"
+                  options={profileOptions}
+                  onChange={handleChangeName}
                 />
               </div>
               <div>
@@ -104,7 +144,6 @@ const Register = () => {
                 type="submit"
                 variant="outlined"
                 disabled={
-                  !values.name ||
                   !values.email ||
                   !values.password ||
                   auth.loading ||
@@ -117,6 +156,34 @@ const Register = () => {
           )
         }}
       </Formik>
+      {showAlert.type && (
+        <Slide
+          direction="left"
+          in={!!showAlert.type}
+          mountOnEnter
+          unmountOnExit
+        >
+          <Alert
+            className="product-alert"
+            severity={showAlert.type}
+            color={showAlert.type}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setShowAlert({})
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            {fail}
+          </Alert>
+        </Slide>
+      )}
       <h4>{auth.data?.error_message}</h4>
     </>
   )

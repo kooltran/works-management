@@ -1,16 +1,16 @@
 import React from 'react'
 import { Redirect, Route } from 'react-router-dom'
-import Cookies from 'universal-cookie'
+
+import { getRole } from './helpers'
 
 const ProtectedRoute = ({ component: Component, ...restOfProps }) => {
-  const cookies = new Cookies()
-  const isAuthenticated = cookies.get('authSession')
-
+  const role = getRole()
+  console.log(role, 'role')
   return (
     <Route
       {...restOfProps}
       render={props =>
-        isAuthenticated ? <Component {...props} /> : <Redirect to="/login" />
+        role ? <Component {...props} /> : <Redirect to="/login" />
       }
     />
   )

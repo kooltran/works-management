@@ -1,0 +1,65 @@
+import {
+  GET_PROFILE_REQUEST,
+  GET_PROFILE_SUCCESS,
+  GET_PROFILE_FAIL,
+  GET_CURRENT_PROFILE_REQUEST,
+  GET_CURRENT_PROFILE_SUCCESS,
+  GET_CURRENT_PROFILE_FAIL,
+  CREATE_PROFILE_REQUEST,
+  CREATE_PROFILE_SUCCESS,
+  CREATE_PROFILE_FAIL,
+} from '../constants'
+
+const getProfileRequest = () => ({
+  type: GET_PROFILE_REQUEST,
+})
+
+const getProfileSuccess = payload => ({
+  type: GET_PROFILE_SUCCESS,
+  payload,
+})
+
+const getProfileFail = error => ({
+  type: GET_PROFILE_FAIL,
+  payload: error,
+})
+
+const getCurrentProfileRequest = () => ({
+  type: GET_CURRENT_PROFILE_REQUEST,
+})
+
+const getCurrentProfileSuccess = payload => ({
+  type: GET_CURRENT_PROFILE_SUCCESS,
+  payload,
+})
+
+const getCurrentProfileFail = error => ({
+  type: GET_CURRENT_PROFILE_FAIL,
+  payload: error,
+})
+
+const createProfileRequest = () => ({
+  type: CREATE_PROFILE_REQUEST,
+})
+
+const createProfileSuccess = payload => ({
+  type: CREATE_PROFILE_SUCCESS,
+  payload,
+})
+
+const createProfileFail = error => ({
+  type: CREATE_PROFILE_FAIL,
+  payload: error,
+})
+
+export {
+  getProfileRequest,
+  getProfileSuccess,
+  getProfileFail,
+  createProfileRequest,
+  createProfileSuccess,
+  createProfileFail,
+  getCurrentProfileRequest,
+  getCurrentProfileSuccess,
+  getCurrentProfileFail,
+}

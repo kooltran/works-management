@@ -1,18 +1,21 @@
 .nav-header {
   justify-content: space-between;
-
+  background-color: #ffffff;
+  color: #333747;
+  font-weight: 600;
   &__menu {
     display: flex;
-    align-items: center;
-
+    margin-left: 45em;
     .user-name {
-      margin-right: 5px;
+      margin-right: 10px;
+      transform: translate(10px, 10px);
+      font-weight: 600;
     }
-
     .user-logout {
       width: 24px;
       height: 24px;
       cursor: pointer;
+      transform: translate(10px, 10px);
     }
   }
 }

@@ -11,7 +11,9 @@ import Divider from '@material-ui/core/Divider'
 import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import ListItem from '@material-ui/core/ListItem'
+// import ListItem from '@material-ui/core/ListItem'
+import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone'
+import MuiListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined'
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
@@ -28,6 +30,12 @@ import { getCurrentUser } from '../../helpers'
 
 import './Home.scss'
 
+import { withStyles } from '@material-ui/styles'
+
+import logoImage from '../../images/logo.svg'
+import loadingImage from '../../images/loading.svg'
+import person from '../../images/person.svg'
+
 const drawerWidth = 240
 
 const sideBarItems = [
@@ -41,7 +49,7 @@ const sideBarItems = [
   },
   {
     value: 'leave',
-    label: 'Leave management',
+    label: 'Leave Management',
   },
 ]
 
@@ -54,6 +62,7 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+    color: '#FFFFFF',
   },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
@@ -75,6 +84,8 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    backgroundColor: '#333747',
+    color: '#FFFFFF',
   },
   drawerHeader: {
     display: 'flex',
@@ -101,7 +112,47 @@ const useStyles = makeStyles(theme => ({
     padding: '24px 0',
     marginLeft: 0,
   },
+  logo: {
+    // width: '179px',
+    marginBottom: '38px',
+    marginTop: '35px',
+    marginLeft: '40px',
+  },
+  person: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: '#F3F6F7',
+    marginRight: '1em',
+  },
 }))
+
+const ListItem = withStyles({
+  root: {
+    '&': {
+      backgroundColor: '#333747',
+      color: '#FFFFFF',
+      '& .MuiListItemIcon-root': {
+        color: '#FFFFFF',
+      },
+    },
+    '&$selected': {
+      backgroundColor: '#0FCEC3',
+      color: '#FFFFFF',
+      '& .MuiListItemIcon-root': {
+        color: '#FFFFFF',
+      },
+    },
+    '&$selected:hover': {
+      backgroundColor: '#0FCEC3',
+      color: '#FFFFFF',
+      '& .MuiListItemIcon-root': {
+        color: '#FFFFFF',
+      },
+    },
+  },
+  selected: {},
+})(MuiListItem)
 
 export default function Home() {
   const classes = useStyles()
@@ -161,10 +212,14 @@ export default function Home() {
             {selectedItem.label}
           </Typography>
           <div className="nav-header__menu">
+            <img src={person} alt="person" className={classes.person} />
             <span className="user-name">{user?.name}</span>
             <span className="user-logout" onClick={submitLogout}>
               <ExitToAppOutlinedIcon />
             </span>
+          </div>
+          <div className="nav-header__menu-noti">
+            <NotificationsNoneIcon />
           </div>
         </Toolbar>
       </AppBar>
@@ -178,6 +233,7 @@ export default function Home() {
         }}
       >
         <div className={classes.drawerHeader}>
+          <img src={logoImage} alt="S3Corporation" className={classes.logo} />
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? (
               <ChevronLeftIcon />

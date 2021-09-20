@@ -7,17 +7,52 @@ import {
   getProfileRequest,
   getProfileSuccess,
   getProfileFail,
+  getCurrentProfileRequest,
+  getCurrentProfileSuccess,
+  getCurrentProfileFail,
 } from '../../actions/profileAction'
-import { getProfile } from '../../api/profileAPI'
+import { getRole } from '../../helpers'
+import { getProfile, getCurrentProfile } from '../../api/profileAPI'
+import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 import { useAppContext } from '../../AppContext'
 import ProfileList from '../../components/Profile/ProfileList'
 
 const Profile = () => {
   const [showAlert, setShowAlert] = useState({})
   const {
-    data: { profile },
+    data: {
+      profile: {
+        get: {
+          data: allListProfile,
+          loading: allListProfileLoading,
+          fail: getAllListProfileFail,
+        },
+      },
+      currentProfile: {
+        data: currentProfile,
+        loading: currentProfileLoading,
+        fail: currentProfileFail,
+      },
+    },
     dispatch,
   } = useAppContext()
+  const role = getRole()
+
+  const getCurrentProfileItem = async () => {
+    dispatch(getCurrentProfileRequest())
+
+    try {
+      const res = await getCurrentProfile()
+      dispatch(getCurrentProfileSuccess(res))
+    } catch (err) {
+      dispatch(getCurrentProfileFail(err.response.data.message || err.message))
+
+      setShowAlert({
+        type: 'error',
+        message: err.response.data.message,
+      })
+    }
+  }
 
   const getProfileList = async () => {
     dispatch(getProfileRequest())
@@ -36,44 +71,35 @@ const Profile = () => {
   }
 
   useEffect(() => {
-    getProfileList()
+    if (role === 'admin') {
+      if (allListProfile === null) {
+        getProfileList()
+      }
+    } else {
+      if (currentProfile === null) {
+        getCurrentProfileItem()
+      }
+    }
   }, [])
 
   return (
     <div className="profile-wrapper">
-      {profile.get.loading ? (
+      {allListProfileLoading || currentProfileLoading ? (
         'loading...'
       ) : (
-        <ProfileList profileList={profile.get.data} />
+        <ProfileList
+          profileList={allListProfile}
+          currentProfile={currentProfile}
+        />
       )}
 
       {showAlert.type && (
-        <Slide
-          direction="left"
-          in={!!showAlert.type}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Alert
-            className="product-alert"
-            severity={showAlert.type}
-            color={showAlert.type}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setShowAlert({})
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            {profile.get.fail}
-          </Alert>
-        </Slide>
+        <NotificationDialog
+          {...showAlert}
+          handleCloseDialog={() => {
+            setShowAlert({})
+          }}
+        />
       )}
     </div>
   )

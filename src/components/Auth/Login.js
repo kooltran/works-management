@@ -3,9 +3,6 @@ import { object, string } from 'yup'
 import { TextField, Button } from '@material-ui/core'
 import { Formik } from 'formik'
 import Select from 'react-select'
-import { Alert } from '@material-ui/lab'
-import CloseIcon from '@material-ui/icons/Close'
-import { IconButton, Slide } from '@material-ui/core'
 
 import {
   getProfileRequest,
@@ -15,6 +12,7 @@ import {
 import { getProfile } from '../../api/profileAPI'
 import { useAppContext } from '../../AppContext'
 import useAuth from './useAuth'
+import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 import { isEmpty } from '../../helpers'
 
 const Schema = object().shape({
@@ -122,20 +120,6 @@ const Login = () => {
                   onChange={handleChangeName}
                 />
               </div>
-              {/* <div>
-                <TextField
-                  fullWidth
-                  error={checkError('email')}
-                  id="input-email"
-                  name="email"
-                  label="Email"
-                  defaultValue=""
-                  helperText={touched.email && errors.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  margin="dense"
-                />
-              </div> */}
               <div>
                 <TextField
                   fullWidth
@@ -168,32 +152,12 @@ const Login = () => {
         }}
       </Formik>
       {showAlert.type && (
-        <Slide
-          direction="left"
-          in={!!showAlert.type}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Alert
-            className="product-alert"
-            severity={showAlert.type}
-            color={showAlert.type}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setShowAlert({})
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            {fail}
-          </Alert>
-        </Slide>
+        <NotificationDialog
+          {...showAlert}
+          handleCloseDialog={() => {
+            setShowAlert({})
+          }}
+        />
       )}
       <h3>{auth?.data?.error_message || auth?.fail}</h3>
     </>

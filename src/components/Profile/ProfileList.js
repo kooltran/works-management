@@ -1,14 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProfileListItem from './ProfileListItem'
 
-import './Profile.scss'
+import { getRole } from '../../helpers'
 
-const ProfileList = ({ profileList }) => {
+import './Profile.scss'
+import ProfileItem from './ProfileListItem'
+
+const ProfileList = ({ profileList, currentProfile }) => {
+  const role = getRole()
+
   return (
-    <div className="profile-list">
-      {profileList?.map(item => (
-        <ProfileListItem key={item._id} item={item} />
-      ))}
+    <div>
+      {role === 'admin' ? (
+        <div className="profile-list__all">
+          {profileList?.map(item => (
+            <ProfileListItem key={item._id} item={item} />
+          ))}
+        </div>
+      ) : (
+        <ProfileItem item={currentProfile} />
+      )}
     </div>
   )
 }

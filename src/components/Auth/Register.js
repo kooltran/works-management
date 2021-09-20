@@ -3,9 +3,7 @@ import { TextField, Button } from '@material-ui/core'
 import { Formik } from 'formik'
 import { object, string } from 'yup'
 import Select from 'react-select'
-import { Alert } from '@material-ui/lab'
-import CloseIcon from '@material-ui/icons/Close'
-import { IconButton, Slide } from '@material-ui/core'
+import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 
 import {
   getProfileRequest,
@@ -157,32 +155,12 @@ const Register = () => {
         }}
       </Formik>
       {showAlert.type && (
-        <Slide
-          direction="left"
-          in={!!showAlert.type}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Alert
-            className="product-alert"
-            severity={showAlert.type}
-            color={showAlert.type}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setShowAlert({})
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            {fail}
-          </Alert>
-        </Slide>
+        <NotificationDialog
+          {...showAlert}
+          handleCloseDialog={() => {
+            setShowAlert({})
+          }}
+        />
       )}
       <h4>{auth.data?.error_message}</h4>
     </>

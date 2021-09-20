@@ -17,25 +17,14 @@ import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedI
 import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
 import EventOutlinedIcon from '@material-ui/icons/EventOutlined'
 import ListItemText from '@material-ui/core/ListItemText'
-import { Alert } from '@material-ui/lab'
-import { IconButton, Slide } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
+import { IconButton } from '@material-ui/core'
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined'
 
-import ProfileList from '../../components/Profile/ProfileList'
-import ProfileListItem from '../../components/Profile/ProfileListItem'
-import {
-  getProfileRequest,
-  getProfileSuccess,
-  getProfileFail,
-  getCurrentProfileRequest,
-  getCurrentProfileSuccess,
-  getCurrentProfileFail,
-} from '../../actions/profileAction'
+import Profile from '../Profile/Profile'
+import Tasks from '../Tasks/Tasks'
+
 import useAuth from '../../components/Auth/useAuth'
-import { getProfile, getCurrentProfile } from '../../api/profileAPI'
-import { useAppContext } from '../../AppContext'
-import { getRole, getCurrentUser } from '../../helpers'
+import { getCurrentUser } from '../../helpers'
 
 import './Home.scss'
 
@@ -109,6 +98,7 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    padding: '24px 0',
     marginLeft: 0,
   },
 }))
@@ -117,48 +107,10 @@ export default function Home() {
   const classes = useStyles()
   const theme = useTheme()
   const [open, setOpen] = React.useState(true)
-  const [showAlert, setShowAlert] = useState({})
   const [selectedItem, setSelected] = React.useState(sideBarItems[0])
-  const {
-    data: { profile, currentProfile },
-    dispatch,
-  } = useAppContext()
+
   const { submitLogout } = useAuth()
-
-  const role = getRole()
   const user = getCurrentUser()
-
-  const getCurrentProfileItem = async () => {
-    dispatch(getCurrentProfileRequest())
-
-    try {
-      const res = await getCurrentProfile()
-      dispatch(getCurrentProfileSuccess(res))
-    } catch (err) {
-      dispatch(getCurrentProfileFail(err.response.data.message || err.message))
-
-      setShowAlert({
-        type: 'error',
-        message: err.response.data.message,
-      })
-    }
-  }
-
-  const getProfileList = async () => {
-    dispatch(getProfileRequest())
-
-    try {
-      const res = await getProfile()
-      dispatch(getProfileSuccess(res.data))
-    } catch (err) {
-      dispatch(getProfileFail(err.response?.data?.message || err.message))
-
-      setShowAlert({
-        type: 'error',
-        message: err.response?.data?.message || err.message,
-      })
-    }
-  }
 
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -175,30 +127,16 @@ export default function Home() {
   const mappingListItem = {
     profile: {
       Icon: <PersonOutlineOutlinedIcon />,
-      content:
-        role === 'admin' ? (
-          <ProfileList profileList={profile.get.data} />
-        ) : currentProfile.loading ? (
-          'loading...'
-        ) : (
-          <ProfileListItem item={currentProfile.data} />
-        ),
+      content: <Profile />,
     },
     reports: {
       Icon: <AssignmentTurnedInOutlinedIcon />,
+      content: <Tasks />,
     },
     leave: {
       Icon: <EventOutlinedIcon />,
     },
   }
-
-  useEffect(() => {
-    if (role === 'admin') {
-      getProfileList()
-    } else {
-      getCurrentProfileItem()
-    }
-  }, [])
 
   return (
     <div className={classes.root}>
@@ -271,34 +209,6 @@ export default function Home() {
         <div className={classes.drawerHeader} />
         {mappingListItem[selectedItem.value].content}
       </main>
-      {showAlert.type && (
-        <Slide
-          direction="left"
-          in={!!showAlert.type}
-          mountOnEnter
-          unmountOnExit
-        >
-          <Alert
-            className="product-alert"
-            severity={showAlert.type}
-            color={showAlert.type}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setShowAlert({})
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            {profile.get.fail}
-          </Alert>
-        </Slide>
-      )}
     </div>
   )
 }

@@ -5,6 +5,8 @@ import {
   currentProfileReducer,
 } from '../reducers/profileReducer'
 
+import { taskReducer } from './taskReducer'
+
 const authInitState = {
   data: {
     token: null,
@@ -34,10 +36,28 @@ const currentProfileInitState = {
   fail: null,
 }
 
+const taskInitState = {
+  get: {
+    loading: false,
+    updating: false,
+    deleting: false,
+    all: null,
+    data: null,
+    fail: null,
+  },
+  create: {
+    loading: false,
+    data: null,
+    fail: null,
+  },
+  activeTab: null,
+}
+
 const [rootReducer, initialStateCombined] = combineReducers({
   auth: [authReducer, authInitState],
   profile: [profileReducer, profileInitState],
   currentProfile: [currentProfileReducer, currentProfileInitState],
+  task: [taskReducer, taskInitState],
 })
 
 export { rootReducer, initialStateCombined }

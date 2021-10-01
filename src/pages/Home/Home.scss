@@ -3,19 +3,26 @@
   background-color: #ffffff;
   color: #333747;
   font-weight: 600;
+
   &__menu {
     display: flex;
-    margin-left: 45em;
+    align-items: center;
+
     .user-name {
       margin-right: 10px;
-      transform: translate(10px, 10px);
       font-weight: 600;
     }
+
     .user-logout {
       width: 24px;
       height: 24px;
       cursor: pointer;
-      transform: translate(10px, 10px);
+    }
+
+    .menu-notification {
+      display: flex;
+      align-content: center;
+      margin-left: 10px;
     }
   }
 }

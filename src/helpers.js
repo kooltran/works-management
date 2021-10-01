@@ -61,6 +61,11 @@ const dateBetweenRange = (date, rangeDate = new Date()) =>
     '[]'
   )
 
+const getWeekRange = (date = new Date()) => `${getStartDateWeek(date).format(
+  'DD/MM/yyyy'
+)} -
+  ${getEndDateWeek(date).format('DD/MM/yyyy')}`
+
 export {
   isEmpty,
   getRole,
@@ -70,4 +75,5 @@ export {
   dateBetweenRange,
   getStartDateWeek,
   getEndDateWeek,
+  getWeekRange,
 }

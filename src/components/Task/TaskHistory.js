@@ -1,21 +1,27 @@
-import React, { useEffect } from 'react'
-import moment from 'moment'
-import { Button } from '@material-ui/core'
+import React, { useEffect, useState } from 'react'
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
+import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined'
 
 import TaskHistoryItem from './TaskHistoryItem'
-import { getTasks } from '../../api/taskAPI'
+import { getTasks, updateTask } from '../../api/taskAPI'
 import {
-  getTaskRequest,
-  getTaskSuccess,
-  getTaskFail,
-  getAllTaskByUser,
+  getAllTaskByUserRequest,
+  getAllTaskByUserFail,
+  getAllTaskByUserSuccess,
+  updateTaskSuccess,
+  updateTaskRequest,
+  updateTaskFail,
 } from '../../actions/taskAction'
+import TableList from '../TableList/TableList'
+import TableListHeader from '../TableList/TableListHeader'
+import TableListBody from '../TableList/TableListBody'
 
-import {
-  dateBetweenRange,
-  getEndDateWeek,
-  getStartDateWeek,
-} from '../../helpers'
+import UpdatingIcon from '../../images/updating.svg'
+
+import WeekNavigation from './WeekNagivation'
+
+import { dateBetweenRange } from '../../helpers'
 
 import { useAppContext } from '../../AppContext'
 
@@ -23,91 +29,138 @@ const TaskHistory = ({ activeTab }) => {
   const {
     data: {
       task: {
-        get: { data: currentTaskContext, loading, all: allTaskByUser },
+        get: { updating, loading, data: allTaskByUser },
         activeTab: activeTabContext,
       },
     },
     dispatch,
   } = useAppContext()
 
-  const currentWeekDate = allTaskByUser?.find(item => item.isActiveWeek)
-    .createdAt
+  const currentWeekTasks =
+    allTaskByUser?.find(item => item.isActiveWeek) || null
 
-  const prevWeekDate = moment(currentWeekDate).subtract(1, 'weeks')
-  const nextWeekDate = moment(currentWeekDate).add(1, 'weeks')
+  const tableBodyDataInit = currentWeekTasks?.tasks || []
 
-  const isEnablePrev = allTaskByUser?.find(item =>
-    dateBetweenRange(item.createdAt, prevWeekDate)
-  )
+  const [tableBodyData, setTableBodyData] = useState([])
 
-  const isEnableNext = allTaskByUser?.find(item =>
-    dateBetweenRange(item.createdAt, nextWeekDate)
-  )
+  const tableHeaderData = [
+    'task name',
+    'start date',
+    'end date',
+    'status',
+    'actions',
+  ]
 
-  const getCurrentTasksByUser = async () => {
-    dispatch(getTaskRequest())
+  const getAllTasksByUser = async () => {
+    dispatch(getAllTaskByUserRequest())
     try {
       const data = await getTasks()
-      const currentWeekTasks = data.find(item =>
-        dateBetweenRange(item.createdAt, new Date())
-      )
 
-      const allCurrentUserTasks = data.map(item =>
-        dateBetweenRange(item.createdAt, new Date())
-          ? { ...item, isActiveWeek: true }
-          : { ...item, isActiveWeek: false }
-      )
+      const mappingTasks = data =>
+        data.map(task => ({
+          id: { value: task._id, type: 'key' },
+          name: { value: task.name, type: 'label' },
+          startDate: { value: task.startDate, type: 'label' },
+          endDate: { value: task.endDate, type: 'label' },
+          status: { value: task.status, type: 'label' },
+          action: {
+            value: '',
+            type: 'action',
+          },
+          isShowEdit: { value: task.isShowEdit, type: 'key' },
+          isEditing: { value: task.isEditing, type: 'key' },
+        }))
 
-      dispatch(getTaskSuccess(currentWeekTasks))
-      dispatch(getAllTaskByUser(allCurrentUserTasks))
+      const allCurrentUserTasks = data
+        .map(item =>
+          data.length === 1
+            ? { ...item, isActiveWeek: true }
+            : dateBetweenRange(item.createdAt, new Date())
+            ? {
+                _id: item._id,
+                tasks: item.tasks,
+                user: item.user,
+                week: item.createdAt,
+                isActiveWeek: true,
+              }
+            : {
+                _id: item._id,
+                tasks: item.tasks,
+                user: item.user,
+                week: item.createdAt,
+                isActiveWeek: false,
+              }
+        )
+        .sort((a, b) => {
+          return new Date(a.week) - new Date(b.week)
+        })
+
+      dispatch(getAllTaskByUserSuccess(allCurrentUserTasks))
     } catch (err) {
-      dispatch(getTaskFail(err))
+      dispatch(getAllTaskByUserFail(err))
     }
   }
 
   const handleEditTaskItem = taskId => {
-    const newTasks = currentTaskContext.tasks.map(task =>
+    // const newTasks = currentWeekTasks.tasks.map(task =>
+    //   task.id.value === taskId
+    //     ? {
+    //         ...task,
+    //         isShowEdit: { value: false, type: 'key' },
+    //         isEditing: { value: true, type: 'key' },
+    //         name: { value: task.name, type: 'textarea' },
+    //         startDate: { value: task.startDate, type: 'date' },
+    //         endDate: { value: task.endDate, type: 'date' },
+    //         status: { value: task.status, type: 'select' },
+    //       }
+    //     : {
+    //         ...task,
+    //         isShowEdit: { value: true, type: 'key' },
+    //         isEditing: { value: false, type: 'key' },
+    //       }
+    // )
+
+    const newTasks = currentWeekTasks.tasks.map(task =>
       task._id === taskId
         ? { ...task, isEditing: true, isShowEdit: false }
         : { ...task, isEditing: false, isShowEdit: true }
     )
-    dispatch(getTaskSuccess({ ...currentTaskContext, tasks: newTasks }))
+
+    const editedTasksByUser = allTaskByUser.map(item =>
+      item.isActiveWeek ? { ...item, tasks: newTasks } : item
+    )
+    dispatch(getAllTaskByUserSuccess(editedTasksByUser))
   }
 
-  const handleNavigateWeeks = date => {
-    const currentWeekTasks = allTaskByUser.find(item =>
-      dateBetweenRange(item.createdAt, date)
-    )
-
-    const allCurrentUserTasks = allTaskByUser.map(item =>
-      dateBetweenRange(item.createdAt, date)
-        ? { ...item, isActiveWeek: true }
-        : { ...item, isActiveWeek: false }
-    )
-
-    dispatch(getTaskSuccess(currentWeekTasks))
-    dispatch(getAllTaskByUser(allCurrentUserTasks))
-  }
+  const handleUpdateTasks = tasks => dispatch(getAllTaskByUserSuccess(tasks))
 
   useEffect(() => {
-    if (currentTaskContext === null || activeTabContext === 'task-history') {
-      getCurrentTasksByUser()
+    if (currentWeekTasks === null || activeTabContext === 'task-history') {
+      getAllTasksByUser()
     }
   }, [activeTabContext])
-  console.log(currentTaskContext, 'currentTaskContext')
+
   return (
     <div className="task-wrapper">
       {loading ? (
         'loading...'
-      ) : (
+      ) : allTaskByUser?.length > 0 ? (
         <div className="task-history">
-          <h3>
-            {`${getStartDateWeek(currentTaskContext?.createdAt).format(
-              'DD/MM/yyyy'
-            )} - ${getEndDateWeek(currentTaskContext?.createdAt).format(
-              'DD/MM/yyyy'
-            )}`}
-          </h3>
+          <div className="task-history__header">
+            <WeekNavigation
+              tasks={allTaskByUser}
+              updateTasks={handleUpdateTasks}
+            />
+          </div>
+          {/* {currentWeekTasks && (
+            <TableList>
+              <TableListHeader data={tableHeaderData} />
+              <TableListBody
+                data={tableBodyDataInit}
+                handleEditTaskItem={handleEditTaskItem}
+              />
+            </TableList>
+          )} */}
           <div className="task-list">
             <div className="task-list__header">
               <div className="task-list__header--item task-name">Task Name</div>
@@ -120,14 +173,14 @@ const TaskHistory = ({ activeTab }) => {
                 Actions
               </div>
             </div>
-            {currentTaskContext && currentTaskContext.tasks.length > 0 && (
+            {currentWeekTasks && currentWeekTasks.tasks.length > 0 && (
               <div className="task-list__body">
-                {currentTaskContext.tasks.map(task => {
+                {currentWeekTasks.tasks.map(task => {
                   return (
                     <TaskHistoryItem
                       key={task._id}
                       task={task}
-                      createdAt={currentTaskContext.createdAt}
+                      createdAt={currentWeekTasks.week}
                       handleEditTaskItem={handleEditTaskItem}
                     />
                   )
@@ -135,23 +188,9 @@ const TaskHistory = ({ activeTab }) => {
               </div>
             )}
           </div>
-          <div className="task-history__pagination">
-            <Button
-              variant="outlined"
-              onClick={() => handleNavigateWeeks(prevWeekDate)}
-              disabled={!isEnablePrev}
-            >
-              Prev Week
-            </Button>
-            <Button
-              variant="outlined"
-              disabled={!isEnableNext}
-              onClick={() => handleNavigateWeeks(nextWeekDate)}
-            >
-              Next Week
-            </Button>
-          </div>
         </div>
+      ) : (
+        'Your tasks list is empty'
       )}
     </div>
   )

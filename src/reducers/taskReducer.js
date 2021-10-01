@@ -1,10 +1,10 @@
 import {
-  CREATE_TASK_REQUEST,
-  CREATE_TASK_SUCCESS,
-  CREATE_TASK_FAIL,
-  GET_TASK_REQUEST,
-  GET_TASK_SUCCESS,
-  GET_TASK_FAIL,
+  GET_ALL_TASK_BY_USER_REQUEST,
+  GET_ALL_TASK_BY_USER_SUCCESS,
+  GET_ALL_TASK_BY_USER_FAIL,
+  GET_ALL_TASK_REQUEST,
+  GET_ALL_TASK_SUCCESS,
+  GET_ALL_TASK_FAIL,
   SET_ACTIVE_TASK_TAB,
   UPDATE_TASK_REQUEST,
   UPDATE_TASK_SUCCESS,
@@ -12,12 +12,12 @@ import {
   DELETE_TASK_REQUEST,
   DELETE_TASK_SUCCESS,
   DELETE_TASK_FAIL,
-  GET_ALL_TASKS_BY_USER,
+  RESET_GET_TASKS,
 } from '../constants'
 
 export const taskReducer = (state, action) => {
   switch (action.type) {
-    case GET_TASK_REQUEST:
+    case GET_ALL_TASK_BY_USER_REQUEST:
       return {
         ...state,
         get: {
@@ -27,7 +27,7 @@ export const taskReducer = (state, action) => {
           fail: null,
         },
       }
-    case GET_TASK_SUCCESS:
+    case GET_ALL_TASK_BY_USER_SUCCESS:
       return {
         ...state,
         get: {
@@ -37,50 +37,10 @@ export const taskReducer = (state, action) => {
           fail: null,
         },
       }
-    case GET_ALL_TASKS_BY_USER:
+    case GET_ALL_TASK_BY_USER_FAIL:
       return {
         ...state,
         get: {
-          ...state.get,
-          loading: false,
-          all: action.payload,
-          fail: null,
-        },
-      }
-    case GET_TASK_FAIL:
-      return {
-        ...state,
-        get: {
-          ...state.get,
-          loading: false,
-          data: null,
-          fail: action.payload,
-        },
-      }
-    case CREATE_TASK_REQUEST:
-      return {
-        ...state,
-        create: {
-          ...state.get,
-          loading: true,
-          data: null,
-          fail: null,
-        },
-      }
-    case CREATE_TASK_SUCCESS:
-      return {
-        ...state,
-        create: {
-          ...state.get,
-          loading: false,
-          data: action.payload,
-          fail: null,
-        },
-      }
-    case CREATE_TASK_FAIL:
-      return {
-        ...state,
-        create: {
           ...state.get,
           loading: false,
           data: null,
@@ -97,12 +57,16 @@ export const taskReducer = (state, action) => {
         },
       }
     case UPDATE_TASK_SUCCESS:
+      const updatedTask = action.payload
+      const updatedTasks = state.get.data?.map(item =>
+        item._id === updatedTask._id ? { ...item, updatedTask } : item
+      )
       return {
         ...state,
         get: {
           ...state.get,
           updating: false,
-          data: action.payload,
+          data: updatedTasks,
           fail: null,
         },
       }
@@ -126,12 +90,16 @@ export const taskReducer = (state, action) => {
         },
       }
     case DELETE_TASK_SUCCESS:
+      const deletedTask = action.payload
+      const deletedTasks = state.get.data?.map(item =>
+        item._id === deletedTask._id ? { ...item, deletedTask } : item
+      )
       return {
         ...state,
         get: {
           ...state.get,
           deleting: false,
-          data: action.payload,
+          data: deletedTasks,
           fail: null,
         },
       }
@@ -151,6 +119,46 @@ export const taskReducer = (state, action) => {
         activeTab: action.payload,
       }
     }
+    case GET_ALL_TASK_REQUEST:
+      return {
+        ...state,
+        all: {
+          ...state.all,
+          loading: true,
+          data: null,
+          fail: null,
+        },
+      }
+    case GET_ALL_TASK_SUCCESS:
+      return {
+        ...state,
+        all: {
+          ...state.all,
+          loading: false,
+          data: action.payload,
+          fail: null,
+        },
+      }
+    case GET_ALL_TASK_FAIL:
+      return {
+        ...state,
+        all: {
+          ...state.all,
+          loading: false,
+          data: null,
+          fail: action.payload,
+        },
+      }
+    case RESET_GET_TASKS:
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          loading: false,
+          data: null,
+          fail: null,
+        },
+      }
     default:
       return state
   }

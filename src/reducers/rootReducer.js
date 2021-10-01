@@ -41,7 +41,11 @@ const taskInitState = {
     loading: false,
     updating: false,
     deleting: false,
-    all: null,
+    data: null,
+    fail: null,
+  },
+  all: {
+    loading: false,
     data: null,
     fail: null,
   },

@@ -18,8 +18,7 @@ import {
   deleteTaskRequest,
   deleteTaskSuccess,
   deleteTaskFail,
-  getTaskSuccess,
-  getAllTaskByUser,
+  getAllTaskByUserSuccess,
 } from '../../actions/taskAction'
 import { updateTask, deleteTask } from '../../api/taskAPI'
 import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
@@ -82,20 +81,23 @@ const taskStatusOption = [
   },
 ]
 
-const TaskHistoryItem = ({ task, handleEditTaskItem, createdAt }) => {
+const TaskHistoryItem = ({
+  task,
+  handleEditTaskItem,
+  createdAt,
+  isShowTaskActions = true,
+}) => {
   const {
     data: {
       task: {
-        get: {
-          data: currentTaskContext,
-          updating,
-          deleting,
-          all: allTaskByUser,
-        },
+        get: { updating, deleting, data: allTaskByUser },
       },
     },
     dispatch,
   } = useAppContext()
+
+  const currentWeekTasks =
+    allTaskByUser?.find(item => item.isActiveWeek) || null
 
   const [showAlert, setShowAlert] = useState({})
   const [selectedDate, setSelectedDate] = useState({
@@ -120,16 +122,21 @@ const TaskHistoryItem = ({ task, handleEditTaskItem, createdAt }) => {
   }
 
   const handleDeleteTaskItem = async () => {
-    dispatch(
-      getTaskSuccess({
-        ...currentTaskContext,
-        tasks: currentTaskContext.tasks.map(taskItem =>
-          taskItem._id === task._id
-            ? { ...taskItem, isDeleting: true }
-            : taskItem
-        ),
-      })
-    )
+    const deletedTaskByUser = allTaskByUser.map(item => {
+      if (item.isActiveWeek) {
+        return {
+          ...item,
+          tasks: currentWeekTasks.tasks.map(taskItem =>
+            taskItem._id === task._id
+              ? { ...taskItem, isDeleting: true }
+              : taskItem
+          ),
+        }
+      } else {
+        return item
+      }
+    })
+    dispatch(getAllTaskByUserSuccess(deletedTaskByUser))
     dispatch(deleteTaskRequest())
     try {
       const data = await deleteTask(task._id)
@@ -138,7 +145,7 @@ const TaskHistoryItem = ({ task, handleEditTaskItem, createdAt }) => {
         item._id === data._id ? { ...item, tasks: data.tasks } : item
       )
       dispatch(deleteTaskSuccess(data))
-      dispatch(getAllTaskByUser(updatedTasks))
+      dispatch(getAllTaskByUserSuccess(updatedTasks))
     } catch (err) {
       setShowAlert({ type: 'error', message: err.message })
       dispatch(deleteTaskFail(err.message))
@@ -155,7 +162,7 @@ const TaskHistoryItem = ({ task, handleEditTaskItem, createdAt }) => {
       )
 
       dispatch(updateTaskSuccess(data))
-      dispatch(getAllTaskByUser(updatedTasks))
+      dispatch(getAllTaskByUserSuccess(updatedTasks))
     } catch (err) {
       setShowAlert({ type: 'error', message: err.message })
       dispatch(updateTaskFail(err.message))
@@ -276,34 +283,36 @@ const TaskHistoryItem = ({ task, handleEditTaskItem, createdAt }) => {
           task.status
         )}
       </div>
-      <div className="task-list__body--item task-actions">
-        {dateBetweenRange(createdAt) && (
-          <span className="remove-icon" onClick={handleDeleteTaskItem}>
-            {task.isDeleting && deleting ? (
+      {isShowTaskActions && (
+        <div className="task-list__body--item task-actions">
+          {dateBetweenRange(createdAt) && (
+            <span className="remove-icon" onClick={handleDeleteTaskItem}>
+              {task.isDeleting && deleting ? (
+                <img src={UpdatingIcon} alt="updating icon" />
+              ) : (
+                <DeleteOutlineOutlinedIcon />
+              )}
+            </span>
+          )}
+          {task.isEditing &&
+            (updating ? (
               <img src={UpdatingIcon} alt="updating icon" />
             ) : (
-              <DeleteOutlineOutlinedIcon />
-            )}
-          </span>
-        )}
-        {task.isEditing &&
-          (updating ? (
-            <img src={UpdatingIcon} alt="updating icon" />
-          ) : (
-            <span className="edit-icon" onClick={handleSubmitEditTaskItem}>
-              <CheckOutlinedIcon />
+              <span className="edit-icon" onClick={handleSubmitEditTaskItem}>
+                <CheckOutlinedIcon />
+              </span>
+            ))}
+          {(task.isShowEdit === undefined ||
+            (task.isShowEdit === undefined && task.isShowEdit)) && (
+            <span
+              className="edit-icon"
+              onClick={() => handleEditTaskItem(task._id)}
+            >
+              <EditOutlinedIcon />
             </span>
-          ))}
-        {(task.isShowEdit === undefined ||
-          (task.isShowEdit === undefined && task.isShowEdit)) && (
-          <span
-            className="edit-icon"
-            onClick={() => handleEditTaskItem(task._id)}
-          >
-            <EditOutlinedIcon />
-          </span>
-        )}
-      </div>
+          )}
+        </div>
+      )}
       {showAlert.type && (
         <NotificationDialog
           {...showAlert}

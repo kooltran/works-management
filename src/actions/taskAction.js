@@ -2,9 +2,9 @@ import {
   CREATE_TASK_REQUEST,
   CREATE_TASK_SUCCESS,
   CREATE_TASK_FAIL,
-  GET_TASK_REQUEST,
-  GET_TASK_SUCCESS,
-  GET_TASK_FAIL,
+  GET_ALL_TASK_BY_USER_REQUEST,
+  GET_ALL_TASK_BY_USER_SUCCESS,
+  GET_ALL_TASK_BY_USER_FAIL,
   UPDATE_TASK_REQUEST,
   UPDATE_TASK_SUCCESS,
   UPDATE_TASK_FAIL,
@@ -12,7 +12,10 @@ import {
   DELETE_TASK_REQUEST,
   DELETE_TASK_SUCCESS,
   DELETE_TASK_FAIL,
-  GET_ALL_TASKS_BY_USER,
+  GET_ALL_TASK_REQUEST,
+  GET_ALL_TASK_SUCCESS,
+  GET_ALL_TASK_FAIL,
+  RESET_GET_TASKS,
 } from '../constants'
 
 const createTaskRequest = () => ({
@@ -29,17 +32,31 @@ const createTaskFail = error => ({
   payload: error,
 })
 
-const getTaskRequest = () => ({
-  type: GET_TASK_REQUEST,
+const getAllTaskByUserRequest = () => ({
+  type: GET_ALL_TASK_BY_USER_REQUEST,
 })
 
-const getTaskSuccess = payload => ({
-  type: GET_TASK_SUCCESS,
+const getAllTaskByUserSuccess = payload => ({
+  type: GET_ALL_TASK_BY_USER_SUCCESS,
   payload,
 })
 
-const getTaskFail = error => ({
-  type: GET_TASK_FAIL,
+const getAllTaskByUserFail = error => ({
+  type: GET_ALL_TASK_BY_USER_FAIL,
+  payload: error,
+})
+
+const getAllTaskRequest = () => ({
+  type: GET_ALL_TASK_REQUEST,
+})
+
+const getAllTaskSuccess = payload => ({
+  type: GET_ALL_TASK_SUCCESS,
+  payload,
+})
+
+const getAllTaskFail = error => ({
+  type: GET_ALL_TASK_FAIL,
   payload: error,
 })
 
@@ -76,18 +93,17 @@ const setActiveTask = tabId => ({
   payload: tabId,
 })
 
-const getAllTaskByUser = payload => ({
-  type: GET_ALL_TASKS_BY_USER,
-  payload,
+const resetTasks = () => ({
+  type: RESET_GET_TASKS,
 })
 
 export {
   createTaskRequest,
   createTaskSuccess,
   createTaskFail,
-  getTaskRequest,
-  getTaskSuccess,
-  getTaskFail,
+  getAllTaskByUserRequest,
+  getAllTaskByUserSuccess,
+  getAllTaskByUserFail,
   setActiveTask,
   updateTaskRequest,
   updateTaskSuccess,
@@ -95,5 +111,8 @@ export {
   deleteTaskRequest,
   deleteTaskSuccess,
   deleteTaskFail,
-  getAllTaskByUser,
+  getAllTaskRequest,
+  getAllTaskSuccess,
+  getAllTaskFail,
+  resetTasks,
 }

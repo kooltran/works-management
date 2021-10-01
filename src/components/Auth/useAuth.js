@@ -8,6 +8,7 @@ import {
   loginSuccess,
   loginFail,
 } from '../../actions/authAction'
+import { resetTasks } from '../../actions/taskAction'
 import { registerAuth, loginAuth, logoutAuth } from '../../api/authAPI'
 
 const useAuth = () => {
@@ -44,6 +45,7 @@ const useAuth = () => {
   const submitLogout = async () => {
     try {
       await logoutAuth()
+      dispatch(resetTasks())
       history.push('/login')
     } catch (err) {
       console.log(err)

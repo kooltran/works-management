@@ -11,7 +11,6 @@ import Divider from '@material-ui/core/Divider'
 import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-// import ListItem from '@material-ui/core/ListItem'
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone'
 import MuiListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
@@ -33,7 +32,6 @@ import './Home.scss'
 import { withStyles } from '@material-ui/styles'
 
 import logoImage from '../../images/logo.svg'
-import loadingImage from '../../images/loading.svg'
 import person from '../../images/person.svg'
 
 const drawerWidth = 240
@@ -109,14 +107,14 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    padding: '24px 0',
+    padding: 0,
     marginLeft: 0,
+    height: '100vh',
+    background: '#f0f0f0',
   },
   logo: {
-    // width: '179px',
-    marginBottom: '38px',
-    marginTop: '35px',
-    marginLeft: '40px',
+    margin: '40px 30px',
+    width: '100%',
   },
   person: {
     width: '40px',
@@ -124,6 +122,12 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '50%',
     background: '#F3F6F7',
     marginRight: '1em',
+  },
+  caretButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    color: '#fff',
   },
 }))
 
@@ -208,18 +212,16 @@ export default function Home() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            {selectedItem.label}
-          </Typography>
+          <Typography variant="h6">{selectedItem.label}</Typography>
           <div className="nav-header__menu">
             <img src={person} alt="person" className={classes.person} />
             <span className="user-name">{user?.name}</span>
             <span className="user-logout" onClick={submitLogout}>
               <ExitToAppOutlinedIcon />
             </span>
-          </div>
-          <div className="nav-header__menu-noti">
-            <NotificationsNoneIcon />
+            <span className="menu-notification">
+              <NotificationsNoneIcon />
+            </span>
           </div>
         </Toolbar>
       </AppBar>
@@ -234,7 +236,10 @@ export default function Home() {
       >
         <div className={classes.drawerHeader}>
           <img src={logoImage} alt="S3Corporation" className={classes.logo} />
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton
+            onClick={handleDrawerClose}
+            className={classes.caretButton}
+          >
             {theme.direction === 'ltr' ? (
               <ChevronLeftIcon />
             ) : (

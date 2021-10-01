@@ -6,7 +6,6 @@ import dateFnsFormat from 'date-fns/format'
 import dateFnsParse from 'date-fns/parse'
 import TextareaAutosize from 'react-textarea-autosize'
 import Select from 'react-select'
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import { format } from 'date-fns'
 
@@ -18,6 +17,7 @@ const TaskFormItem = ({
   handleChange,
   setFieldValue,
   values,
+  selectedDays,
 }) => {
   const FORMAT = 'dd/MM/yyyy'
 
@@ -106,9 +106,15 @@ const TaskFormItem = ({
           parseDate={parseDate}
           name={`${task.id}-startDate`}
           placeholder="DD/MM/YYYY"
+          showOutsideDays
           dayPickerProps={{
+            showOutsideDays: true,
+            firstDayOfWeek: 1,
+            enableOutsideDaysClick: true,
             disabledDays: {
               daysOfWeek: [0, 6],
+              before: selectedDays[0],
+              after: selectedDays[6],
             },
           }}
         />
@@ -123,8 +129,13 @@ const TaskFormItem = ({
           name={`${task.id}-endDate`}
           placeholder="DD/MM/YYYY"
           dayPickerProps={{
+            showOutsideDays: true,
+            enableOutsideDaysClick: true,
+            firstDayOfWeek: 1,
             disabledDays: {
               daysOfWeek: [0, 6],
+              before: selectedDays[0],
+              after: selectedDays[6],
             },
           }}
         />
@@ -146,9 +157,6 @@ const TaskFormItem = ({
           onClick={() => handleDeleteTaskItem(task.id)}
         >
           <DeleteOutlineOutlinedIcon />
-        </span>
-        <span className="edit-icon">
-          <EditOutlinedIcon />
         </span>
       </div>
     </div>

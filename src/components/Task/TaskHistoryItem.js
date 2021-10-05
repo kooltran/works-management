@@ -3,12 +3,14 @@ import TextareaAutosize from 'react-textarea-autosize'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import DayPickerInput from 'react-day-picker/DayPickerInput'
+
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined'
 import dateFnsFormat from 'date-fns/format'
 import dateFnsParse from 'date-fns/parse'
 import { DateUtils } from 'react-day-picker'
 import Select from 'react-select'
 import { format } from 'date-fns'
+import classnames from 'classnames'
 
 import UpdatingIcon from '../../images/updating.svg'
 import {
@@ -20,6 +22,8 @@ import {
   deleteTaskFail,
   getAllTaskByUserSuccess,
 } from '../../actions/taskAction'
+import TableListItem from '../Table/TableListItem'
+
 import { updateTask, deleteTask } from '../../api/taskAPI'
 import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 import { useAppContext } from '../../AppContext'
@@ -83,9 +87,9 @@ const taskStatusOption = [
 
 const TaskHistoryItem = ({
   task,
-  handleEditTaskItem,
   createdAt,
   isShowTaskActions = true,
+  itemId,
 }) => {
   const {
     data: {
@@ -119,6 +123,19 @@ const TaskHistoryItem = ({
 
   const handleChangeStatus = option => {
     setStatus(option.value)
+  }
+
+  const handleEditTaskItem = () => {
+    const newTasks = currentWeekTasks.tasks.map(taskItem =>
+      taskItem._id === task._id
+        ? { ...taskItem, isEditing: true, isShowEdit: false }
+        : { ...taskItem, isEditing: false, isShowEdit: true }
+    )
+
+    const editedTasksByUser = allTaskByUser.map(item =>
+      item.isActiveWeek ? { ...item, tasks: newTasks } : item
+    )
+    dispatch(getAllTaskByUserSuccess(editedTasksByUser))
   }
 
   const handleDeleteTaskItem = async () => {
@@ -190,21 +207,23 @@ const TaskHistoryItem = ({
       submitUpdateTask(taskUpdatePayload)
       setShowAlert({})
     } else {
-      if (!taskUpdateValues.every(task => task)) {
-        setShowAlert({
-          type: 'error',
-          message: 'All your fields can not be empty',
-        })
-      }
+      const updatedTasks = allTaskByUser.map(item =>
+        item._id === itemId
+          ? {
+              ...item,
+              tasks: item.tasks.map(
+                taskItem =>
+                  console.log(taskItem, 'taskITem') || {
+                    ...taskItem,
+                    isEditing: false,
+                    isShowEdit: true,
+                  }
+              ),
+            }
+          : item
+      )
 
-      if (
-        taskHistoryValues.every(elem => taskUpdateValues.indexOf(elem) > -1)
-      ) {
-        setShowAlert({
-          type: 'error',
-          message: 'Your changes should be different',
-        })
-      }
+      dispatch(getAllTaskByUserSuccess(updatedTasks))
     }
   }
 
@@ -213,8 +232,12 @@ const TaskHistoryItem = ({
   }
 
   return (
-    <div className="task-list__body--row">
-      <div className="task-list__body--item task-name">
+    <div className="table-list__body--row">
+      <TableListItem
+        className={classnames('task-name', {
+          'is-editing': task.isEditing,
+        })}
+      >
         {task.isEditing ? (
           <TextareaAutosize
             autoFocus
@@ -226,8 +249,12 @@ const TaskHistoryItem = ({
         ) : (
           task.name
         )}
-      </div>
-      <div className="task-list__body--item task-start">
+      </TableListItem>
+      <TableListItem
+        className={classnames('task-start', {
+          'is-editing': task.isEditing,
+        })}
+      >
         {task.isEditing ? (
           <DayPickerInput
             value={selectedDate.startDate}
@@ -245,8 +272,12 @@ const TaskHistoryItem = ({
         ) : (
           task.startDate
         )}
-      </div>
-      <div className="task-list__body--item task-end">
+      </TableListItem>
+      <TableListItem
+        className={classnames('task-end', {
+          'is-editing': task.isEditing,
+        })}
+      >
         {task.isEditing ? (
           <DayPickerInput
             value={selectedDate.endDate}
@@ -264,8 +295,12 @@ const TaskHistoryItem = ({
         ) : (
           task.endDate
         )}
-      </div>
-      <div className="task-list__body--item task-status">
+      </TableListItem>
+      <TableListItem
+        className={classnames('task-status', {
+          'is-editing': task.isEditing,
+        })}
+      >
         {task.isEditing ? (
           <Select
             className="basic-single"
@@ -282,9 +317,9 @@ const TaskHistoryItem = ({
         ) : (
           task.status
         )}
-      </div>
+      </TableListItem>
       {isShowTaskActions && (
-        <div className="task-list__body--item task-actions">
+        <TableListItem className="task-actions">
           {dateBetweenRange(createdAt) && (
             <span className="remove-icon" onClick={handleDeleteTaskItem}>
               {task.isDeleting && deleting ? (
@@ -302,8 +337,7 @@ const TaskHistoryItem = ({
                 <CheckOutlinedIcon />
               </span>
             ))}
-          {(task.isShowEdit === undefined ||
-            (task.isShowEdit === undefined && task.isShowEdit)) && (
+          {(task.isShowEdit === undefined || task.isShowEdit) && (
             <span
               className="edit-icon"
               onClick={() => handleEditTaskItem(task._id)}
@@ -311,7 +345,7 @@ const TaskHistoryItem = ({
               <EditOutlinedIcon />
             </span>
           )}
-        </div>
+        </TableListItem>
       )}
       {showAlert.type && (
         <NotificationDialog

@@ -9,6 +9,11 @@ import { useAppContext } from '../../AppContext'
 import { dateBetweenRange, getStartDateWeek } from '../../helpers'
 import WeekNavigation from './WeekNagivation'
 
+import TableList from '../Table/TableList'
+import TableListHeader from '../Table/TableListHeader'
+import TableListBody from '../Table/TableListBody'
+import TableListItem from '../Table/TableListItem'
+
 const AllTaskHistory = () => {
   const {
     data: {
@@ -82,18 +87,16 @@ const AllTaskHistory = () => {
                   updateTasks={handleUpdateTasks}
                 />
               </div>
-              <div className="task-list">
-                <div className="task-list__header">
-                  <div className="task-list__header--item">Name</div>
-                  <div className="task-list__header--item">Tasks</div>
-                </div>
-                <div className="task-list__body">
+              <TableList col="2">
+                <TableListHeader>
+                  <TableListItem>Name</TableListItem>
+                  <TableListItem>Tasks</TableListItem>
+                </TableListHeader>
+                <TableListBody>
                   {activeWeekTasks.tasksOfUser.map(item => (
-                    <div key={item.user._id} className="task-list__body--row">
-                      <div className="task-list__body--item">
-                        {item.user.name}
-                      </div>
-                      <div className="task-list__body--item">
+                    <div key={item.user._id} className="table-list__body--row">
+                      <TableListItem>{item.user.name}</TableListItem>
+                      <TableListItem>
                         <ul className="task-names">
                           {item.tasks.map(task => (
                             <li key={task._id} className="task-names__item">
@@ -101,11 +104,11 @@ const AllTaskHistory = () => {
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      </TableListItem>
                     </div>
                   ))}
-                </div>
-              </div>
+                </TableListBody>
+              </TableList>
             </>
           )}
     </div>

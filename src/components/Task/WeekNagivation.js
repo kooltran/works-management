@@ -47,8 +47,11 @@ const customStyles = {
 }
 
 const WeekNavigation = ({ tasks, updateTasks }) => {
-  const [isDisabledPrev, setDisabledPrev] = useState(false)
-  const [isDisabledNext, setDisabledNext] = useState(true)
+  const lastTaskItem = tasks.find((item, index) => index === tasks.length - 1)
+  const firstTaskItem = tasks.find((item, index) => index === 0)
+
+  const [isDisabledPrev, setDisabledPrev] = useState(firstTaskItem.isActiveWeek)
+  const [isDisabledNext, setDisabledNext] = useState(lastTaskItem.isActiveWeek)
   const [selectedWeek, setSelectedWeek] = useState({
     value: getStartDateWeek(),
     label: getWeekRange(),

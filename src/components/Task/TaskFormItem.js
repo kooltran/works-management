@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import DayPickerInput from 'react-day-picker/DayPickerInput'
 import { DateUtils } from 'react-day-picker'
@@ -8,6 +8,8 @@ import TextareaAutosize from 'react-textarea-autosize'
 import Select from 'react-select'
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import { format } from 'date-fns'
+
+import TableListItem from '../Table/TableListItem'
 
 import 'react-day-picker/lib/style.css'
 
@@ -88,16 +90,16 @@ const TaskFormItem = ({
   }
 
   return (
-    <div className="task-list__body--row">
-      <div className="task-list__body--item task-name">
+    <div className="table-list__body--row">
+      <TableListItem className="task-name">
         <TextareaAutosize
           autoFocus
           rows={1}
           onChange={handleChange}
           name={`${task.id}-name`}
         />
-      </div>
-      <div className="task-list__body--item task-start">
+      </TableListItem>
+      <TableListItem className="task-start">
         <DayPickerInput
           value={values[`${task.id}-startDate`]}
           onDayChange={handleDayChange}
@@ -118,8 +120,8 @@ const TaskFormItem = ({
             },
           }}
         />
-      </div>
-      <div className="task-list__body--item task-end">
+      </TableListItem>
+      <TableListItem className="task-end">
         <DayPickerInput
           value={values[`${task.id}-endDate`]}
           onDayChange={handleDayChange}
@@ -139,8 +141,8 @@ const TaskFormItem = ({
             },
           }}
         />
-      </div>
-      <div className="task-list__body--item task-status">
+      </TableListItem>
+      <TableListItem className="task-status">
         <Select
           className="basic-single"
           classNamePrefix="select"
@@ -150,15 +152,15 @@ const TaskFormItem = ({
           styles={customStyles}
           onChange={handleChangeStatus(`${task.id}-status`)}
         />
-      </div>
-      <div className="task-list__body--item task-actions">
+      </TableListItem>
+      <TableListItem className="task-actions">
         <span
           className="remove-icon"
           onClick={() => handleDeleteTaskItem(task.id)}
         >
           <DeleteOutlineOutlinedIcon />
         </span>
-      </div>
+      </TableListItem>
     </div>
   )
 }

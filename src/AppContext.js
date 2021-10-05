@@ -16,7 +16,7 @@ export const AppContextProvider = props => {
 
 export const useAppContext = () => {
   const { data, setData } = useContext(AppContext)
-  console.log(setData, 'setData')
+
   const dispatch = useCallback(
     action => {
       setData(action)

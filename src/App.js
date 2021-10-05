@@ -1,14 +1,11 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Container from '@material-ui/core/Container'
 
 import Login from './components/Auth/Login'
 import Register from './components/Auth/Register'
 import Profile from './pages/Profile/Profile'
 import Home from './pages/Home/Home'
 import ProtectedRoute from './ProtectedRoute'
-
-import './App.css'
 
 const App = () => {
   return (

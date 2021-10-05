@@ -16,6 +16,11 @@ import {
 } from '../../actions/taskAction'
 import { useAppContext } from '../../AppContext'
 
+import TableList from '../Table/TableList'
+import TableListHeader from '../Table/TableListHeader'
+import TableListBody from '../Table/TableListBody'
+import TableListItem from '../Table/TableListItem'
+
 import TaskFormItem from './TaskFormItem'
 import './Task.scss'
 import 'react-day-picker/lib/style.css'
@@ -220,26 +225,24 @@ const TaskForm = ({ activeTab }) => {
                     <AddIcon />
                   </div>
                 </div>
-                <div className="task-list">
-                  <div className="task-list__header">
-                    <div className="task-list__header--item task-name">
+                <TableList className="task-list">
+                  <TableListHeader>
+                    <TableListItem className="task-name">
                       Task Name
-                    </div>
-                    <div className="task-list__header--item task-start">
+                    </TableListItem>
+                    <TableListItem className="task-start">
                       Start Date
-                    </div>
-                    <div className="task-list__header--item task-end">
-                      End Date
-                    </div>
-                    <div className="task-list__header--item task-status">
+                    </TableListItem>
+                    <TableListItem className="task-end">End Date</TableListItem>
+                    <TableListItem className="task-status">
                       Status
-                    </div>
-                    <div className="task-list__header--item task-actions">
+                    </TableListItem>
+                    <TableListItem className="task-actions">
                       Action
-                    </div>
-                  </div>
+                    </TableListItem>
+                  </TableListHeader>
                   {taskList.length > 0 && (
-                    <div className="task-list__body">
+                    <TableListBody>
                       {taskList.map(task => (
                         <TaskFormItem
                           key={task.id}
@@ -251,9 +254,9 @@ const TaskForm = ({ activeTab }) => {
                           selectedDays={selectedDays}
                         />
                       ))}
-                    </div>
+                    </TableListBody>
                   )}
-                </div>
+                </TableList>
               </div>
               <div className="task-submit">
                 {taskList.length > 0 && (

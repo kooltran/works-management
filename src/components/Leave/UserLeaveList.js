@@ -7,8 +7,8 @@ import {
 } from '../../actions/leaveAction'
 import { getCurrentUserLeaves } from '../../api/leaveAPI'
 
-import Pill from '../../components/Pill'
-import List from '../../components/List'
+import Pill from '../Pill'
+import List from '../List'
 
 const sampleData = [
   {
@@ -55,7 +55,7 @@ const sampleData = [
   },
 ]
 
-const LeaveList = () => {
+const UserLeaveList = () => {
   const {
     data: {
       leave: {
@@ -65,7 +65,7 @@ const LeaveList = () => {
     },
     dispatch,
   } = useAppContext()
-  console.log(createdLeaveData, 'createdLeaveData')
+
   const getCurrentLeaves = async () => {
     dispatch(getCurrentLeaveRequest())
     try {
@@ -121,4 +121,4 @@ const LeaveList = () => {
   )
 }
 
-export default LeaveList
+export default UserLeaveList

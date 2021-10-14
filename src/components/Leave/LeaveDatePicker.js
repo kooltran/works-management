@@ -28,7 +28,7 @@ const LeaveDatePicker = ({ selectedDates }) => {
   const [months, setMonth] = useState([])
   const [showMonths, setShowMonths] = useState(false)
   const [chosenDate, setChosenDate] = useState(selectedDates)
-  console.log(chosenDate, 'chosenDate')
+
   const { _, dispatch } = useAppContext()
 
   const handleShowMonths = () => {

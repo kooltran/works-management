@@ -8,9 +8,11 @@ import Box from '@material-ui/core/Box'
 import Add from '@material-ui/icons/Add'
 
 import { useAppContext } from '../../AppContext'
+import { getRole } from '../../helpers'
 
 import LeaveForm from '../../components/Leave/LeaveForm'
-import LeaveList from '../../components/Leave/LeaveList'
+import UserLeaveList from '../../components/Leave/UserLeaveList'
+import LeaveAdmin from '../../components/Leave/LeaveAdmin'
 
 import './Leave.scss'
 
@@ -35,12 +37,12 @@ const LeaveManagement = () => {
   const {
     data: {
       leave: {
-        get: { data },
         create: { data: createdLeaveData },
       },
     },
-    dispatch,
   } = useAppContext()
+
+  const role = getRole()
 
   const [showCreateLeaveForm, setShowLeaveForm] = useState(!!createdLeaveData)
   const handleCloseLeaveForm = () => setShowLeaveForm(false)
@@ -53,44 +55,50 @@ const LeaveManagement = () => {
 
   return (
     <div className="leave-wrapper">
-      <div className="leave-add">
-        <CustomButton
-          variant="outlined"
-          textcolor="#fff"
-          background="#00D1B2"
-          style={{ textTransform: 'capitalize', fontSize: 16 }}
-          hover={{
-            color: '#fff',
-            backgroundColor: '#00D1B2',
-            opacity: 0.8,
-          }}
-          onClick={handleOpenLeaveForm}
-        >
-          Create Leave
-          <Add />
-        </CustomButton>
-      </div>
+      {role === 'admin' ? (
+        <LeaveAdmin />
+      ) : (
+        <>
+          <div className="leave-add">
+            <CustomButton
+              variant="outlined"
+              textcolor="#fff"
+              background="#00D1B2"
+              style={{ textTransform: 'capitalize', fontSize: 16 }}
+              hover={{
+                color: '#fff',
+                backgroundColor: '#00D1B2',
+                opacity: 0.8,
+              }}
+              onClick={handleOpenLeaveForm}
+            >
+              Create Leave
+              <Add />
+            </CustomButton>
+          </div>
 
-      <LeaveList />
+          <UserLeaveList />
 
-      <Modal
-        className="leave-modal"
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        open={showCreateLeaveForm}
-        onClose={handleCloseLeaveForm}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={showCreateLeaveForm}>
-          <Box sx={style}>
-            <LeaveForm />
-          </Box>
-        </Fade>
-      </Modal>
+          <Modal
+            className="leave-modal"
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            open={showCreateLeaveForm}
+            onClose={handleCloseLeaveForm}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={showCreateLeaveForm}>
+              <Box sx={style}>
+                <LeaveForm />
+              </Box>
+            </Fade>
+          </Modal>
+        </>
+      )}
     </div>
   )
 }

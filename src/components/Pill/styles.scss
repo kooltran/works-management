@@ -1,0 +1,20 @@
+.cui-pill {
+  display: inline-flex;
+  border-radius: 1.25rem;
+  padding: 0.375rem 0.75rem;
+  padding-top: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  position: relative;
+
+  .close {
+    color: var(--color-charcoal);
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    line-height: 0.5;
+    outline: none;
+  }
+}

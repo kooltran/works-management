@@ -53,8 +53,8 @@ const WeekNavigation = ({ tasks, updateTasks }) => {
   const [isDisabledPrev, setDisabledPrev] = useState(firstTaskItem.isActiveWeek)
   const [isDisabledNext, setDisabledNext] = useState(lastTaskItem.isActiveWeek)
   const [selectedWeek, setSelectedWeek] = useState({
-    value: getStartDateWeek(),
-    label: getWeekRange(),
+    value: getStartDateWeek(tasks[tasks.length - 1].week),
+    label: getWeekRange(tasks[tasks.length - 1].week),
   })
 
   const weekOptions =
@@ -66,6 +66,7 @@ const WeekNavigation = ({ tasks, updateTasks }) => {
   const handlePrev = () => {
     let prevItem
     let prevIndex
+
     for (let i = 0; i < tasks.length; i++) {
       if (tasks[i].isActiveWeek) {
         prevItem = tasks[i - 1]

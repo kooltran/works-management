@@ -39,10 +39,11 @@ const TaskHistory = ({ activeTab }) => {
       const data = await getTasks()
 
       const allCurrentUserTasks = data
-        .map(item =>
-          data.length === 1
-            ? { ...item, isActiveWeek: true }
-            : dateBetweenRange(item.createdAt, new Date())
+        .sort((a, b) => {
+          return new Date(a.createdAt) - new Date(b.createdAt)
+        })
+        .map((item, index) =>
+          index === data.length - 1
             ? {
                 _id: item._id,
                 tasks: item.tasks,
@@ -58,9 +59,6 @@ const TaskHistory = ({ activeTab }) => {
                 isActiveWeek: false,
               }
         )
-        .sort((a, b) => {
-          return new Date(a.week) - new Date(b.week)
-        })
 
       dispatch(getAllTaskByUserSuccess(allCurrentUserTasks))
     } catch (err) {

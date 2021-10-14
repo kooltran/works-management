@@ -5,6 +5,8 @@ import {
   currentProfileReducer,
 } from '../reducers/profileReducer'
 
+import { leaveReducer } from './leaveReducer'
+
 import { taskReducer } from './taskReducer'
 
 const authInitState = {
@@ -57,11 +59,26 @@ const taskInitState = {
   activeTab: null,
 }
 
+const leaveInitState = {
+  dates: [],
+  create: {
+    loading: false,
+    data: null,
+    fail: null,
+  },
+  get: {
+    loading: false,
+    data: null,
+    fail: null,
+  },
+}
+
 const [rootReducer, initialStateCombined] = combineReducers({
   auth: [authReducer, authInitState],
   profile: [profileReducer, profileInitState],
   currentProfile: [currentProfileReducer, currentProfileInitState],
   task: [taskReducer, taskInitState],
+  leave: [leaveReducer, leaveInitState],
 })
 
 export { rootReducer, initialStateCombined }

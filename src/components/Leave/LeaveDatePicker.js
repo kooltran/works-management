@@ -22,12 +22,12 @@ import { useAppContext } from '../../AppContext'
 import DateCell from './DateCell'
 import './styles.scss'
 
-const LeaveDatePicker = ({ selectedDates }) => {
+const LeaveDatePicker = ({ selectedDates: disabledDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [rows, setRows] = useState([])
   const [months, setMonth] = useState([])
   const [showMonths, setShowMonths] = useState(false)
-  const [chosenDate, setChosenDate] = useState(selectedDates)
+  const [chosenDate, setChosenDate] = useState([])
 
   const { _, dispatch } = useAppContext()
 
@@ -138,6 +138,7 @@ const LeaveDatePicker = ({ selectedDates }) => {
                 <DateCell
                   key={day}
                   chosenDate={chosenDate}
+                  disabledDate={disabledDate}
                   handleChangeTime={handleChangeTime}
                   onDateClick={handleDayClick}
                   currentMonth={currentMonth}
@@ -154,16 +155,23 @@ const LeaveDatePicker = ({ selectedDates }) => {
   const handleDayClick = (e, day) => {
     const dateFormatted = format(day, 'dd/MM/yyyy')
     e.preventDefault()
-    if (!chosenDate.find(item => item.date === dateFormatted)) {
-      setChosenDate([
-        ...chosenDate,
-        { date: dateFormatted, time: ['am', 'pm'] },
-      ])
-    } else {
-      const filterChosenDate = chosenDate.filter(
-        item => item.date !== dateFormatted
-      )
-      setChosenDate(filterChosenDate)
+
+    let disabled = disabledDate.filter(item => item.date === dateFormatted)
+    disabled = disabled.length === 2 ? {...disabled[0], time: ["am", "pm"]} : disabled[0]
+
+    if (!disabled || disabled?.time.length === 1) {
+      if (!chosenDate.find(item => item.date === dateFormatted)) {
+        const time = disabled ? (disabled.time[0] === 'am' ? ['pm'] : ['am']) : null
+        setChosenDate([
+          ...chosenDate,
+          { date: dateFormatted, time: time || ['am', 'pm'] },
+        ])
+      } else {
+        const filterChosenDate = chosenDate.filter(
+          item => item.date !== dateFormatted
+        )
+        setChosenDate(filterChosenDate)
+      }
     }
   }
 

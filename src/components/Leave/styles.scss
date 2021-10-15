@@ -131,6 +131,7 @@
       cursor: pointer;
 
       &:hover,
+      &.chosen,
       &.selected {
         background: #ccc;
       }
@@ -208,8 +209,18 @@
       }
     }
 
-    .selected {
+    .chosen {
       background: #1a8fff;
+      color: #fff;
+    }
+
+    .selected {
+      background: #63b16f;
+      color: #fff;
+    }
+
+    .selected-half {
+      background: #cac968;
       color: #fff;
     }
 

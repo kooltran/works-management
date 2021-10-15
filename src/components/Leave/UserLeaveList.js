@@ -59,12 +59,23 @@ const UserLeaveList = () => {
   const {
     data: {
       leave: {
-        get: { data },
+        get: { data: currentLeaveData, loading: loadingLeaveData },
         create: { data: createdLeaveData },
       },
     },
     dispatch,
   } = useAppContext()
+
+  const leaveData = currentLeaveData?.map((item) => 
+      ({
+        Date: item.dates.map((date) => `${date.date} ${date.time[0]} `),
+        'Duration (day)': 'calculating',
+        Type: item.type,
+        Reason: item.reason,
+        Status: item.status,
+      })
+    )
+    || []
 
   const getCurrentLeaves = async () => {
     dispatch(getCurrentLeaveRequest())
@@ -94,9 +105,10 @@ const UserLeaveList = () => {
 
   return (
     <div>
+      {loadingLeaveData ? 'Loading Leave Date List...' :
       <List
         id="cui-sample-list-sortables"
-        data={sampleData}
+        data={leaveData}
         toggleInnerContent={false}
         options={{
           styles: {
@@ -116,7 +128,9 @@ const UserLeaveList = () => {
           },
         }}
         itemResolver={ListResolver}
+        loading={loadingLeaveData}
       />
+    }
     </div>
   )
 }

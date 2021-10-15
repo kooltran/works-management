@@ -3,6 +3,7 @@ import { format, startOfMonth, isSameMonth } from 'date-fns'
 
 const DateCell = ({
   chosenDate,
+  disabledDate,
   handleChangeTime,
   onDateClick,
   currentMonth,
@@ -12,24 +13,32 @@ const DateCell = ({
   const cloneDay = day
   const monthStart = startOfMonth(currentMonth)
 
-  const selectedDate = chosenDate.find(item => item.date === dateFormatted)
+  const chosen = chosenDate.find(item => item.date === dateFormatted)
+  let selected = disabledDate.filter(item => item.date === dateFormatted)
+  selected = selected.length === 2 ? {...selected[0], time: ["am", "pm"]} : selected[0]
+
   const formattedDate = format(day, 'd')
-  const [checkedStatus, setCheckedStatus] = useState([])
+  const [checkedChosenStatus, setCheckedChosenStatus] = useState([])
+  const checkedSelectedStatus = selected ? selected.time : []
 
   useEffect(() => {
-    if (selectedDate) {
-      setCheckedStatus(selectedDate.time)
+    if (chosen) {
+      setCheckedChosenStatus(chosen.time)
     } else {
-      setCheckedStatus([])
+      setCheckedChosenStatus([])
     }
-  }, [chosenDate, day, selectedDate])
+  }, [chosenDate, day, chosen])
 
   return (
     <div
       className={`col cell ${
         !isSameMonth(day, monthStart)
           ? 'disabled'
-          : selectedDate
+          : chosen
+          ? 'chosen'
+          : checkedSelectedStatus.length === 1
+          ? 'selected-half'
+          : checkedSelectedStatus.length === 2
           ? 'selected'
           : ''
       }`}
@@ -41,16 +50,18 @@ const DateCell = ({
           <input
             type="checkbox"
             name="am"
-            checked={checkedStatus.includes('am')}
+            checked={checkedChosenStatus.includes('am') || checkedSelectedStatus.includes('am')}
             readOnly
+            disabled={checkedSelectedStatus.includes('am')}
           />
         </span>
         <span onClick={e => handleChangeTime(e, cloneDay)}>
           <input
             type="checkbox"
             name="pm"
-            checked={checkedStatus.includes('pm')}
+            checked={checkedChosenStatus.includes('pm') || checkedSelectedStatus.includes('pm')}
             readOnly
+            disabled={checkedSelectedStatus.includes('pm')}
           />
         </span>
       </div>

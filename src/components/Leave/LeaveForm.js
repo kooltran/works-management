@@ -5,11 +5,12 @@ import Select from 'react-select'
 import { Button } from '@material-ui/core'
 
 import {
+  getCurrentLeaveSuccess,
   createLeaveRequest,
   createLeaveSuccess,
   createLeaveFail,
 } from '../../actions/leaveAction'
-import { createLeave } from '../../api/leaveAPI'
+import { createLeave, getCurrentUserLeaves } from '../../api/leaveAPI'
 import { useAppContext } from '../../AppContext'
 
 import LeaveDatePicker from './LeaveDatePicker'
@@ -41,11 +42,11 @@ const LeaveForm = ({ isShowLeaveForm }) => {
     dispatch,
   } = useAppContext()
 
-  const leaveDatesArr = leaveData.map(data => {
+  const leaveDatesArr = leaveData?.map(data => {
     return data.dates
   })
 
-  const leaveDates = leaveDatesArr.flat()
+  const leaveDates = leaveDatesArr?.flat()
   console.log(leaveDates, 'leaveDates')
   const handleChangeLeaveType = name => option => {
     const { setFieldValue } = formRef.current
@@ -62,7 +63,9 @@ const LeaveForm = ({ isShowLeaveForm }) => {
     dispatch(createLeaveRequest())
     try {
       const data = await createLeave(payload)
-      dispatch(createLeaveSuccess(data))
+      await dispatch(createLeaveSuccess(data))
+      const currentData = await getCurrentUserLeaves()
+      dispatch(getCurrentLeaveSuccess(currentData))
     } catch (err) {
       dispatch(createLeaveFail(err.message))
     }

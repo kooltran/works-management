@@ -196,7 +196,6 @@ const Register = () => {
                   <Box>
                     {
                       <div className={classes.textDanger}>
-                        {/* <ContactlessIcon className={classes.iconMessage} /> */}
                         {auth?.data?.user?.error_message}
                       </div>
                     }

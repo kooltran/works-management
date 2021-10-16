@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { object, string } from 'yup'
 import { Button } from '@material-ui/core'
 import { Formik } from 'formik'
-import Select from 'react-select'
 import { makeStyles } from '@material-ui/core/styles'
 
 import classNames from 'classnames'
@@ -11,16 +10,12 @@ import classNames from 'classnames'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import LockIcon from '@mui/icons-material/Lock'
-import Input from '@mui/material/Input'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import Visibility from '@mui/icons-material/Visibility'
 import EmailIcon from '@mui/icons-material/Email'
 import LoginIcon from '@mui/icons-material/Login'
-
-// import { ToastContainer, toast } from "material-react-toastify";
-// import "material-react-toastify/dist/ReactToastify.css";
 
 import {
   getProfileRequest,
@@ -132,7 +127,6 @@ const Login = () => {
   const formRef = useRef()
   const classes = useStyles()
   const helperTextClasses = useHelperTextStyles()
-  // const notify = () => toast(`${auth?.data?.user?.error_message}`);
   const [showAlert, setShowAlert] = useState({})
   const {
     data: {
@@ -143,6 +137,7 @@ const Login = () => {
     },
     dispatch,
   } = useAppContext()
+  console.log(auth?.data?.error_message, 'failed login')
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClick = () => {
@@ -276,6 +271,13 @@ const Login = () => {
                       }}
                     ></TextField>
                   </Box>
+                  <Box>
+                    {
+                      <div className={classes.textDanger}>
+                        {auth?.data?.error_message}
+                      </div>
+                    }
+                  </Box>
                 </div>
                 <Button
                   color="primary"
@@ -285,7 +287,6 @@ const Login = () => {
                   )}
                   type="submit"
                   variant="outlined"
-                  // onClick={notify}
                   disabled={
                     !values.email ||
                     !values.password ||

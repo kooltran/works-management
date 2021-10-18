@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { object, string } from 'yup'
 import { Button } from '@material-ui/core'
 import { Formik } from 'formik'
+
 import { makeStyles } from '@material-ui/core/styles'
 
 import classNames from 'classnames'
@@ -138,7 +139,6 @@ const Login = () => {
     },
     dispatch,
   } = useAppContext()
-  console.log(auth?.data?.error_message, 'failed login')
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClick = () => {

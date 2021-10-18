@@ -7,6 +7,8 @@ import Profile from './pages/Profile/Profile'
 import Home from './pages/Home/Home'
 import ProtectedRoute from './ProtectedRoute'
 
+import './App.scss'
+
 const App = () => {
   return (
     <div className="App">

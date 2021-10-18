@@ -1,0 +1,65 @@
+.leave {
+  &-wrapper {
+    margin-top: 20px;
+    padding: 0 15px;
+  }
+
+  &-form {
+    &__item {
+      margin-bottom: 20px;
+
+      .title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #0fcec3;
+      }
+    }
+
+    &__type {
+      .title {
+        display: inline-block;
+      }
+    }
+
+    &__block {
+      display: flex;
+    }
+
+    &__desc {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      margin-left: 10px;
+      padding-left: 10px;
+      border-left: 1px solid #bdbdbd;
+
+      > div {
+        height: 100%;
+      }
+
+      .leave-reason {
+        textarea {
+          width: 100%;
+          min-height: 180px;
+          outline: none;
+          border-color: #ccc;
+          border-radius: 4px;
+          padding: 5px;
+          resize: none;
+        }
+      }
+    }
+
+    &__datepicker {
+      .title {
+        display: block;
+      }
+    }
+  }
+
+  &-add {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

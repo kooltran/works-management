@@ -1,0 +1,47 @@
+$mobile-min: 320px;
+$mobile-max: 767px;
+$tablet-min: 768px;
+$tablet-max: 1023px;
+$border-radius: 8px;
+$mobileHeaderHeight: 57px;
+
+@mixin shadowy {
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
+  border-radius: $border-radius;
+}
+
+@mixin responsiveScreenMobile($orientation: false) {
+  @if $orientation {
+    @media screen and (min-width: $mobile-min) and (max-width: $mobile-max) and (orientation:#{$orientation}) {
+      @content;
+    }
+  } @else {
+    @media screen and (min-width: $mobile-min) and (max-width: $mobile-max) {
+      @content;
+    }
+  }
+}
+
+@mixin responsiveScreenTablet($orientation: false) {
+  @if $orientation {
+    @media screen and (min-width: $tablet-min) and (max-width: $tablet-max) and (orientation:#{$orientation}) {
+      @content;
+    }
+  } @else {
+    @media screen and (min-width: $tablet-min) and (max-width: $tablet-max) {
+      @content;
+    }
+  }
+}
+
+@mixin responsiveScreenMobileAndTablet($orientation: false) {
+  @if $orientation {
+    @media screen and (min-width: $mobile-min) and (max-width: $tablet-max) and (orientation: #{$orientation}) {
+      @content;
+    }
+  } @else {
+    @media screen and (min-width: $mobile-min) and (max-width: $tablet-max) {
+      @content;
+    }
+  }
+}

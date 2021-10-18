@@ -23,6 +23,7 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined'
 
 import Profile from '../Profile/Profile'
 import Tasks from '../Tasks/Tasks'
+import LeaveManagement from '../Leave/LeaveManagement'
 
 import useAuth from '../../components/Auth/useAuth'
 import { getCurrentUser } from '../../helpers'
@@ -190,6 +191,7 @@ export default function Home() {
     },
     leave: {
       Icon: <EventOutlinedIcon />,
+      content: <LeaveManagement />,
     },
   }
 

@@ -24,36 +24,6 @@ export const leaveReducer = (state, action) => {
         ...state,
         dates: action.payload,
       }
-    case CREATE_LEAVE_REQUEST:
-      return {
-        ...state,
-        create: {
-          ...state.create,
-          loading: true,
-          data: null,
-          fail: null,
-        },
-      }
-    case CREATE_LEAVE_SUCCESS:
-      return {
-        ...state,
-        create: {
-          ...state.create,
-          loading: false,
-          data: action.payload,
-          fail: null,
-        },
-      }
-    case CREATE_LEAVE_FAIL:
-      return {
-        ...state,
-        create: {
-          ...state.create,
-          loading: false,
-          data: null,
-          fail: action.payload,
-        },
-      }
     case GET_CURRENT_LEAVE_REQUEST:
       return {
         ...state,
@@ -78,6 +48,35 @@ export const leaveReducer = (state, action) => {
         get: {
           loading: false,
           data: null,
+          fail: action.payload,
+        },
+      }
+    case CREATE_LEAVE_REQUEST:
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          creating: true,
+        },
+      }
+    case CREATE_LEAVE_SUCCESS:
+      const createdLeaveItem = action.payload
+      const createdLeaves = [...state?.get?.data, createdLeaveItem]
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          creating: false,
+          data: createdLeaves,
+          fail: null,
+        },
+      }
+    case CREATE_LEAVE_FAIL:
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          creating: false,
           fail: action.payload,
         },
       }

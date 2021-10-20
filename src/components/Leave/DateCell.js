@@ -13,9 +13,10 @@ const DateCell = ({
   const cloneDay = day
   const monthStart = startOfMonth(currentMonth)
 
-  const chosen = chosenDate.find(item => item.date === dateFormatted)
-  let selected = disabledDate.filter(item => item.date === dateFormatted)
-  selected = selected.length === 2 ? {...selected[0], time: ["am", "pm"]} : selected[0]
+  const chosen = chosenDate?.find(item => item.date === dateFormatted)
+  let selected = disabledDate?.filter(item => item.date === dateFormatted) || []
+  selected =
+    selected.length === 2 ? { ...selected[0], time: ['am', 'pm'] } : selected[0]
 
   const formattedDate = format(day, 'd')
   const [checkedChosenStatus, setCheckedChosenStatus] = useState([])
@@ -50,7 +51,10 @@ const DateCell = ({
           <input
             type="checkbox"
             name="am"
-            checked={checkedChosenStatus.includes('am') || checkedSelectedStatus.includes('am')}
+            checked={
+              checkedChosenStatus.includes('am') ||
+              checkedSelectedStatus.includes('am')
+            }
             readOnly
             disabled={checkedSelectedStatus.includes('am')}
           />
@@ -59,7 +63,10 @@ const DateCell = ({
           <input
             type="checkbox"
             name="pm"
-            checked={checkedChosenStatus.includes('pm') || checkedSelectedStatus.includes('pm')}
+            checked={
+              checkedChosenStatus.includes('pm') ||
+              checkedSelectedStatus.includes('pm')
+            }
             readOnly
             disabled={checkedSelectedStatus.includes('pm')}
           />

@@ -35,8 +35,7 @@ const LeaveForm = ({ isShowLeaveForm }) => {
     data: {
       leave: {
         dates,
-        create: { loading: creatingLeave },
-        get: { data: leaveData },
+        get: { data: leaveData, creating: creatingLeave, fail },
       },
     },
     dispatch,
@@ -47,7 +46,7 @@ const LeaveForm = ({ isShowLeaveForm }) => {
   })
 
   const leaveDates = leaveDatesArr?.flat()
-  console.log(leaveDates, 'leaveDates')
+
   const handleChangeLeaveType = name => option => {
     const { setFieldValue } = formRef.current
     setFieldValue(name, option.value)
@@ -63,11 +62,11 @@ const LeaveForm = ({ isShowLeaveForm }) => {
     dispatch(createLeaveRequest())
     try {
       const data = await createLeave(payload)
-      await dispatch(createLeaveSuccess(data))
-      const currentData = await getCurrentUserLeaves()
-      dispatch(getCurrentLeaveSuccess(currentData))
+      dispatch(createLeaveSuccess(data))
     } catch (err) {
-      dispatch(createLeaveFail(err.message))
+      dispatch(
+        createLeaveFail(err?.response?.data?.error.message || err.message)
+      )
     }
   }
 

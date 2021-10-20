@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../../AppContext'
 import {
   getCurrentLeaveRequest,
@@ -7,75 +7,43 @@ import {
 } from '../../actions/leaveAction'
 import { getCurrentUserLeaves } from '../../api/leaveAPI'
 
+import PageLoading from '../../images/page_loading.svg'
+
+import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 import Pill from '../Pill'
 import List from '../List'
-
-const sampleData = [
-  {
-    Date: '10 May 2021',
-    'Duration (day)': '2',
-    Type: 'Annual Leave',
-    Reason: 'Personal Issues',
-    Status: 'Pending',
-  },
-  {
-    Date: '11 May 2021',
-    'Duration (day)': '1',
-    Type: 'Unpaid Leave',
-    Reason: 'Personal Issues',
-    Status: 'Pending',
-  },
-  {
-    Date: '12 May 2021',
-    'Duration (day)': '3',
-    Type: 'Annual Leave',
-    Reason: 'Personal Issues',
-    Status: 'Pending',
-  },
-  {
-    Date: '13 May 2021',
-    'Duration (day)': '4',
-    Type: 'Unpaid Leave',
-    Reason: 'Personal Issues',
-    Status: 'Rejected',
-  },
-  {
-    Date: '14 May 2021',
-    'Duration (day)': '2',
-    Type: 'Annual Leave',
-    Reason: 'Personal Issues',
-    Status: 'Pending',
-  },
-  {
-    Date: '15 May 2021',
-    'Duration (day)': '5',
-    Type: 'Annual Leave',
-    Reason: 'Personal Issues',
-    Status: 'Approved',
-  },
-]
 
 const UserLeaveList = () => {
   const {
     data: {
       leave: {
-        get: { data: currentLeaveData, loading: loadingLeaveData },
-        create: { data: createdLeaveData },
+        get: { data: currentLeaveData, loading: loadingLeaveData, fail },
       },
     },
     dispatch,
   } = useAppContext()
 
-  const leaveData = currentLeaveData?.map((item) => 
-      ({
-        Date: item.dates.map((date) => `${date.date} ${date.time[0]} `),
-        'Duration (day)': 'calculating',
-        Type: item.type,
+  const [showAlert, setShowAlert] = useState({})
+
+  const leaveData =
+    currentLeaveData?.map(item => {
+      const dates = item.dates
+        .map(d => (d.time.length === 2 ? d.date : `${d.date}(${d.time[0]})`))
+        .flat()
+        .sort()
+
+      const duration = item.dates.reduce(
+        (acc, d) => (d.time.length === 2 ? acc + 1 : acc + 0.5),
+        0
+      )
+      return {
+        Date: dates.join(', '),
+        'Duration (day)': duration,
+        Type: item.type.split('-').join(' '),
         Reason: item.reason,
         Status: item.status,
-      })
-    )
-    || []
+      }
+    }) || []
 
   const getCurrentLeaves = async () => {
     dispatch(getCurrentLeaveRequest())
@@ -87,11 +55,26 @@ const UserLeaveList = () => {
     }
   }
 
+  const pillColorMapping = {
+    pending: {
+      background: '#fdf0e4',
+      color: '#F2994A',
+    },
+    approved: {
+      background: 'rgb(47,128,237,0.2)',
+      color: '#2F80ED',
+    },
+  }
+
   const ListResolver = d => {
     const result = { ...d }
     if (d.Status) {
       result.Status = (
-        <Pill pillBg="#fdf0e4" pillColor="#F2994A">
+        <Pill
+          pillBg={pillColorMapping[d.Status].background}
+          pillColor={pillColorMapping[d.Status].color}
+          style={{ textTransform: 'capitalize' }}
+        >
           {d.Status}
         </Pill>
       )
@@ -99,38 +82,58 @@ const UserLeaveList = () => {
     return result
   }
 
+  const handleCloseAlert = () => setShowAlert({})
+
   useEffect(() => {
     getCurrentLeaves()
   }, [])
 
+  useEffect(() => {
+    setShowAlert({ type: 'error', message: fail })
+  }, [fail])
+
   return (
     <div>
-      {loadingLeaveData ? 'Loading Leave Date List...' :
-      <List
-        id="cui-sample-list-sortables"
-        data={leaveData}
-        toggleInnerContent={false}
-        options={{
-          styles: {
-            Status: {
-              '--itemWidth': '15%',
-              textAlign: 'right',
-              alignContent: 'flex-end',
+      {loadingLeaveData ? (
+        <div className="page-loading">
+          <img src={PageLoading} alt="page_loading" />
+        </div>
+      ) : (
+        <List
+          id="cui-sample-list-sortables"
+          data={leaveData}
+          toggleInnerContent={false}
+          options={{
+            styles: {
+              Status: {
+                '--itemWidth': '15%',
+                textAlign: 'right',
+                alignContent: 'flex-end',
+              },
+              Reason: {
+                '--itemWidth': '15%',
+                textTransform: 'capitalize',
+              },
+              Type: {
+                textTransform: 'capitalize',
+              },
+              'Duration (day)': {
+                alignContent: 'center',
+                textAlign: 'center',
+              },
             },
-            Reason: {
-              '--itemWidth': '15%',
-            },
-            'Duration (day)': {
-              // '--itemWidth': '15%',
-              alignContent: 'center',
-              textAlign: 'center',
-            },
-          },
-        }}
-        itemResolver={ListResolver}
-        loading={loadingLeaveData}
-      />
-    }
+          }}
+          itemResolver={ListResolver}
+          loading={loadingLeaveData}
+        />
+      )}
+
+      {showAlert.message && (
+        <NotificationDialog
+          {...showAlert}
+          handleCloseDialog={handleCloseAlert}
+        />
+      )}
     </div>
   )
 }

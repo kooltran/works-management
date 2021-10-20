@@ -14,8 +14,7 @@ import TableList from '../Table/TableList'
 import TableListHeader from '../Table/TableListHeader'
 import TableListBody from '../Table/TableListBody'
 import TableListItem from '../Table/TableListItem'
-
-import { dateBetweenRange } from '../../helpers'
+import PageLoading from '../../images/page_loading.svg'
 
 import { useAppContext } from '../../AppContext'
 
@@ -77,7 +76,9 @@ const TaskHistory = ({ activeTab }) => {
   return (
     <div className="task-wrapper">
       {loading ? (
-        'loading...'
+        <div className="page-loading">
+          <img src={PageLoading} alt="page_loading" />
+        </div>
       ) : allTaskByUser?.length > 0 ? (
         <div className="task-history task-list">
           <div className="task-history__header">

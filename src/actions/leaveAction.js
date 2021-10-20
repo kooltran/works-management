@@ -6,6 +6,15 @@ import {
   GET_CURRENT_LEAVE_REQUEST,
   GET_CURRENT_LEAVE_SUCCESS,
   GET_CURRENT_LEAVE_FAIL,
+  GET_ALL_LEAVE_REQUEST,
+  GET_ALL_LEAVE_SUCCESS,
+  GET_ALL_LEAVE_FAIL,
+  DELETE_LEAVE_REQUEST,
+  DELETE_LEAVE_SUCCESS,
+  DELETE_LEAVE_FAIL,
+  APPROVE_LEAVE_REQUEST,
+  APPROVE_LEAVE_SUCCESS,
+  APPROVE_LEAVE_FAIL,
 } from '../constants'
 
 const setDatesLeave = payload => ({
@@ -41,6 +50,48 @@ const getCurrentLeaveFail = error => ({
   payload: error,
 })
 
+const getAllLeaveRequest = () => ({
+  type: GET_ALL_LEAVE_REQUEST,
+})
+
+const getAllLeaveSuccess = payload => ({
+  type: GET_ALL_LEAVE_SUCCESS,
+  payload,
+})
+
+const getAllLeaveFail = error => ({
+  type: GET_ALL_LEAVE_FAIL,
+  payload: error,
+})
+
+const deleteLeaveRequest = () => ({
+  type: DELETE_LEAVE_REQUEST,
+})
+
+const deleteLeaveSuccess = payload => ({
+  type: DELETE_LEAVE_SUCCESS,
+  payload,
+})
+
+const deleteLeaveFail = error => ({
+  type: DELETE_LEAVE_FAIL,
+  payload: error,
+})
+
+const approveLeaveRequest = () => ({
+  type: APPROVE_LEAVE_REQUEST,
+})
+
+const approveLeaveSuccess = payload => ({
+  type: APPROVE_LEAVE_SUCCESS,
+  payload,
+})
+
+const approveLeaveFail = error => ({
+  type: APPROVE_LEAVE_FAIL,
+  payload: error,
+})
+
 export {
   setDatesLeave,
   createLeaveRequest,
@@ -49,4 +100,13 @@ export {
   getCurrentLeaveRequest,
   getCurrentLeaveSuccess,
   getCurrentLeaveFail,
+  getAllLeaveRequest,
+  getAllLeaveSuccess,
+  getAllLeaveFail,
+  deleteLeaveRequest,
+  deleteLeaveSuccess,
+  deleteLeaveFail,
+  approveLeaveRequest,
+  approveLeaveSuccess,
+  approveLeaveFail,
 }

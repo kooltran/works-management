@@ -5,7 +5,9 @@ import Backdrop from '@material-ui/core/Backdrop'
 import Box from '@material-ui/core/Box'
 import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 
-import { TextField, Button, OutlinedInput } from '@material-ui/core'
+import PageLoading from '../../images/page_loading.svg'
+
+import { TextField } from '@material-ui/core'
 
 import { Formik } from 'formik'
 
@@ -123,7 +125,9 @@ const ProfileList = () => {
     <>
       {role === 'admin' ? (
         allListProfileLoading ? (
-          'loading...'
+          <div className="page-loading">
+            <img src={PageLoading} alt="page_loading" />
+          </div>
         ) : (
           <TableList className="profile-list" col="6">
             <TableListHeader>
@@ -150,7 +154,9 @@ const ProfileList = () => {
           </TableList>
         )
       ) : currentProfileLoading ? (
-        'loading...'
+        <div className="page-loading">
+          <img src={PageLoading} alt="page_loading" />
+        </div>
       ) : (
         <ProfileItem
           item={currentProfile}

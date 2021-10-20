@@ -71,6 +71,13 @@ const leaveInitState = {
     data: null,
     fail: null,
   },
+  all: {
+    loading: false,
+    deleting: false,
+    approving: false,
+    data: null,
+    fail: null,
+  },
 }
 
 const [rootReducer, initialStateCombined] = combineReducers({

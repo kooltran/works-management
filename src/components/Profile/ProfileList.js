@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { components } from 'react-select'
 import { object, string } from 'yup'
 import Modal from '@material-ui/core/Modal/'
@@ -35,9 +35,16 @@ import {
   getCurrentProfileRequest,
   getCurrentProfileSuccess,
   getCurrentProfileFail,
+  updateProfileRequest,
+  updateProfileSuccess,
+  updateProfileFail,
 } from '../../actions/profileAction'
 
-import { getProfile, getCurrentProfile } from '../../api/profileAPI'
+import {
+  getProfile,
+  getCurrentProfile,
+  updateProfile,
+} from '../../api/profileAPI'
 
 import TableList from '../Table/TableList'
 import TableListHeader from '../Table/TableListHeader'
@@ -49,13 +56,21 @@ import { getRole } from '../../helpers'
 
 import './Profile.scss'
 import ProfileItem from './ProfileListItem'
+import { values } from 'lodash-es'
 
 const Schema = object().shape({
-  name: string().required().min(1, 'Name must be at least 1 characters'),
+  name: string()
+    .min(2, 'Username is too short!')
+    .max(50, 'Username is too long!')
+    .required('Username is required field'),
   position: string()
-    .required()
-    .min(1, 'position must be at least 1 characters'),
-  lead: string().required().min(1, 'Lead must be at least 1 characters'),
+    .min(2, 'Position field is too Short!')
+    .max(50, 'Position field is too long!')
+    .required('Position is required field'),
+  lead: string()
+    .min(2, 'Lead name field is too Short!')
+    .max(50, 'Lead name field is too long!')
+    .required('Lead is required field'),
 })
 
 const useStyles = makeStyles(() => ({
@@ -103,6 +118,18 @@ const useStyles = makeStyles(() => ({
     backgroundColor: 'red',
     // position: 'absolute',
   },
+  textDanger: {
+    color: 'red',
+    fontSize: '12px',
+  },
+  titleProject: {
+    color: '#294272',
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontWeight: 400,
+    lineHeight: 1,
+    fontSize: '0.8rem',
+    padding: '9px 0px',
+  },
 }))
 export const useHelperTextStyles = makeStyles(() => ({
   root: {
@@ -149,17 +176,39 @@ export const useHelperTextStyles = makeStyles(() => ({
       display: 'flex',
       justifyContent: 'space-between',
     },
+    '& .css-1okebmr-indicatorSeparator': {
+      display: 'none',
+    },
+    '&  .css-1s2u09g-control': {
+      borderStyle: 'none',
+      borderRadius: '0px',
+      borderBottom: '1px solid salmon',
+      menuIsOpen: 'true',
+    },
+    '& .css-b62m3t-container:before': {
+      left: 0,
+      right: 0,
+      bottom: 0,
+      content: '0a0',
+      position: 'absolute',
+      transition: 'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+      borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+      pointerEvents: 'none',
+    },
+    '& .css-1pahdxg-control:hover': {
+      borderColor: 'none',
+    },
   },
 }))
 
 export const ProfileList = () => {
+  const formRef = useRef()
   const role = getRole()
   const classes = useStyles()
   const textStyles = useHelperTextStyles()
   const [showEditProfile, setShow] = useState(false)
   const [editingProfileItem, setProfileItem] = useState({})
   const [showAlert, setShowAlert] = useState({})
-
   const {
     data: {
       profile: {
@@ -167,6 +216,7 @@ export const ProfileList = () => {
           data: allListProfile,
           loading: allListProfileLoading,
           fail: getAllListProfileFail,
+          updating,
         },
       },
       currentProfile: {
@@ -177,12 +227,14 @@ export const ProfileList = () => {
     },
     dispatch,
   } = useAppContext()
-
   const [projectOption, setProjectoption] = useState([])
   const [selectedProjectItem, setProjectItem] = useState({})
   const [projectItemDelete, setProjectItemDelete] = useState([])
   const [isDeleteProjItem, setDeleteProjItem] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const renderProfileValues = projectOptionArr =>
+    projectOptionArr.map(item => item.value)
+  const projectsValue = renderProfileValues(projectOption)
   const getProfileList = async () => {
     dispatch(getProfileRequest())
 
@@ -190,11 +242,11 @@ export const ProfileList = () => {
       const res = await getProfile()
       dispatch(getProfileSuccess(res.data))
     } catch (err) {
-      dispatch(getProfileFail(err.response.data.message || err.message))
+      dispatch(getProfileFail(err?.response?.data?.message || err.message))
 
       setShowAlert({
         type: 'error',
-        message: err.response.data.message,
+        message: err?.response?.data?.message,
       })
     }
   }
@@ -215,6 +267,23 @@ export const ProfileList = () => {
     }
   }
 
+  const updateProfileList = async payload => {
+    dispatch(updateProfileRequest())
+
+    try {
+      const res = await updateProfile(editingProfileItem._id, payload)
+      dispatch(updateProfileSuccess(res))
+      setShow(false)
+    } catch (err) {
+      dispatch(updateProfileFail(err?.response?.data?.message || err.message))
+
+      setShow({
+        type: 'error',
+        message: err?.response?.data?.message,
+      })
+    }
+  }
+
   const handleEditProfile = id => {
     const editingProfileItem = allListProfile.find(item => item._id === id)
     const fstEditingProjItem = editingProfileItem?.project[0]
@@ -222,6 +291,7 @@ export const ProfileList = () => {
       label: item,
       value: item,
     }))
+
     const initProjectItem = {
       isLoading: false,
       label: fstEditingProjItem,
@@ -242,16 +312,25 @@ export const ProfileList = () => {
       label: inputOption,
       value: inputOption,
     }
+    const { setFieldValue } = formRef.current
+    const createdProjectOption = [...projectOption, newProfileOption]
+    const createdProjectValues = renderProfileValues(createdProjectOption)
+
     setIsLoading(true)
-    setProjectoption([...projectOption, newProfileOption])
+    setProjectoption(createdProjectOption)
+    setFieldValue('project', createdProjectValues)
     setProjectItem(newProfileOption)
     setDeleteProjItem(false)
     setIsLoading(false)
   }
 
   const handleDeleteOption = data => {
-    const deleteOption = projectOption.filter(x => x !== data)
-    setProjectoption(deleteOption)
+    const deletedProjectOption = projectOption.filter(x => x !== data)
+    const { setFieldValue } = formRef.current
+    const deletedProjectValues = renderProfileValues(deletedProjectOption)
+
+    setFieldValue('project', deletedProjectValues)
+    setProjectoption(deletedProjectOption)
     setDeleteProjItem(true)
   }
 
@@ -265,9 +344,11 @@ export const ProfileList = () => {
     </div>
   )
   const handleCloseEditProfile = () => setShow(false)
+
   const handleSubmitEditProfileItem = values => {
-    console.log(values)
+    updateProfileList(values)
   }
+
   useEffect(() => {
     if (isDeleteProjItem) {
       setProjectItem(projectOption[0])
@@ -346,8 +427,10 @@ export const ProfileList = () => {
                 name: editingProfileItem?.name,
                 position: editingProfileItem?.position,
                 lead: editingProfileItem?.lead,
+                project: projectsValue,
               }}
               validationSchema={Schema}
+              innerRef={formRef}
             >
               {({
                 handleSubmit,
@@ -383,11 +466,14 @@ export const ProfileList = () => {
                           shrink: true,
                         }}
                       />
+                      {touched.name && errors.name && (
+                        <div className={classes.textDanger}>{errors.name}</div>
+                      )}
                       <TextField
                         className={textStyles.root}
                         fullWidth
                         id="position"
-                        name="name"
+                        name="position"
                         label="Position"
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -400,10 +486,14 @@ export const ProfileList = () => {
                           shrink: true,
                         }}
                       />
-                      <div>
-                        <h5>Project</h5>
-                      </div>
+                      {touched.position && errors.position && (
+                        <div className={classes.textDanger}>
+                          {errors.position}
+                        </div>
+                      )}
+                      <div className={classes.titleProject}>Project</div>
                       <CreatableSelect
+                        className={textStyles.root}
                         isClearable
                         isDisabled={isLoading}
                         isLoading={isLoading}
@@ -412,7 +502,6 @@ export const ProfileList = () => {
                         onCreateOption={handleCreateProjItem}
                         options={projectOption}
                         value={selectedProjectItem}
-                        // menuIsOpen={true}
                       />
                       <TextField
                         className={textStyles.root}
@@ -431,6 +520,9 @@ export const ProfileList = () => {
                           shrink: true,
                         }}
                       />
+                      {touched.lead && errors.lead && (
+                        <div className={classes.textDanger}>{errors.lead}</div>
+                      )}
                       <div className={classes.buttonSave}>
                         <Button
                           color="primary"

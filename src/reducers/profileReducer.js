@@ -8,6 +8,9 @@ import {
   GET_CURRENT_PROFILE_REQUEST,
   GET_CURRENT_PROFILE_SUCCESS,
   GET_CURRENT_PROFILE_FAIL,
+  UPDATE_PROFILE_REQUEST,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_FAIL,
 } from '../constants'
 
 export const profileReducer = (state, action) => {
@@ -53,6 +56,7 @@ export const profileReducer = (state, action) => {
         },
       }
     case CREATE_PROFILE_SUCCESS:
+      console.log(action.payload, 'action')
       return {
         ...state,
         create: {
@@ -68,6 +72,39 @@ export const profileReducer = (state, action) => {
         create: {
           ...state.get,
           loading: false,
+          data: null,
+          fail: action.payload,
+        },
+      }
+    case UPDATE_PROFILE_REQUEST:
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          updating: true,
+        },
+      }
+    case UPDATE_PROFILE_SUCCESS: {
+      const updatedProfileItem = action.payload
+      const updatedProfile = state?.get?.data.map(item =>
+        item._id === updatedProfileItem._id ? updatedProfileItem : item
+      )
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          updating: false,
+          data: updatedProfile,
+          fail: null,
+        },
+      }
+    }
+    case UPDATE_PROFILE_FAIL:
+      return {
+        ...state,
+        get: {
+          ...state.get,
+          updating: false,
           data: null,
           fail: action.payload,
         },

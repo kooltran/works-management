@@ -24,6 +24,7 @@ const profileInitState = {
     loading: false,
     data: null,
     fail: null,
+    updating: false,
   },
   create: {
     loading: false,

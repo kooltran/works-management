@@ -38,6 +38,11 @@
         height: 100%;
       }
 
+      .total-date .total-date-body {
+        height: 178px;
+        overflow: scroll;
+      }
+
       .leave-reason {
         textarea {
           width: 100%;
@@ -55,6 +60,10 @@
       .title {
         display: block;
       }
+    }
+
+    &__cta {
+      text-align: center;
     }
   }
 

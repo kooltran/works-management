@@ -22,14 +22,31 @@ import { useAppContext } from '../../AppContext'
 import DateCell from './DateCell'
 import './styles.scss'
 
-const LeaveDatePicker = ({ selectedDates: disabledDate }) => {
+const LeaveDatePicker = ({ disabledDate }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [rows, setRows] = useState([])
   const [months, setMonth] = useState([])
   const [showMonths, setShowMonths] = useState(false)
   const [chosenDate, setChosenDate] = useState([])
+  const holiday = [
+    '01/01/2021',
+    '30/04/2021',
+    '01/05/2021',
+    '02/09/2021',
+    '03/09/2021',
+    '24/12/2021',
+  ]
 
-  const { _, dispatch } = useAppContext()
+  const 
+  { 
+    _,
+    data: {
+      leave: {
+        get: { data: currentLeaveData },
+      },
+    },
+    dispatch 
+  } = useAppContext()
 
   const handleShowMonths = () => {
     setShowMonths(!showMonths)
@@ -134,17 +151,20 @@ const LeaveDatePicker = ({ selectedDates: disabledDate }) => {
         {rows.map((row, idx) => {
           return (
             <div key={idx} className="row">
-              {row?.map(day => (
-                <DateCell
+              {row?.map(day => {
+                const dateFormatted = format(day, 'dd/MM/yyyy')
+                const disabled = handleDisabledDate(dateFormatted)
+                return (<DateCell
                   key={day}
                   chosenDate={chosenDate}
-                  disabledDate={disabledDate}
+                  holiday={holiday}
+                  disabledDate={disabled}
                   handleChangeTime={handleChangeTime}
                   onDateClick={handleDayClick}
                   currentMonth={currentMonth}
                   day={day}
-                />
-              ))}
+                />)
+              })}
             </div>
           )
         })}
@@ -156,8 +176,7 @@ const LeaveDatePicker = ({ selectedDates: disabledDate }) => {
     const dateFormatted = format(day, 'dd/MM/yyyy')
     e.preventDefault()
 
-    let disabled = disabledDate.filter(item => item.date === dateFormatted)
-    disabled = disabled.length === 2 ? {...disabled[0], time: ["am", "pm"]} : disabled[0]
+    const disabled = handleDisabledDate(dateFormatted)
 
     if (!disabled || disabled?.time.length === 1) {
       if (!chosenDate.find(item => item.date === dateFormatted)) {
@@ -173,6 +192,26 @@ const LeaveDatePicker = ({ selectedDates: disabledDate }) => {
         setChosenDate(filterChosenDate)
       }
     }
+  }
+
+  const handleDisabledDate = (dateFormatted) => {
+    let leaveStatus = null
+    let disabled = disabledDate?.filter(item => item.date === dateFormatted) || []
+    disabled =
+      disabled.length === 2 ? { ...disabled[0], time: ['am', 'pm'] } : disabled[0]
+    
+    if (disabled && disabled.date) {
+      const leaveCurrent = currentLeaveData.find((leave) => {
+            const dates = leave.dates.flat()
+            return dates.some((date) => 
+              date.date === disabled.date 
+              && disabled.time.sort().every((time, idx) => time === date.time.sort()[idx])
+            )
+          })
+      leaveStatus = leaveCurrent ? leaveCurrent.status : null
+      disabled.status = leaveStatus
+    }
+    return disabled
   }
 
   const nextMonth = () => {

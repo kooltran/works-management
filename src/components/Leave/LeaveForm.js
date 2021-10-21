@@ -5,12 +5,11 @@ import Select from 'react-select'
 import { Button } from '@material-ui/core'
 
 import {
-  getCurrentLeaveSuccess,
   createLeaveRequest,
   createLeaveSuccess,
   createLeaveFail,
 } from '../../actions/leaveAction'
-import { createLeave, getCurrentUserLeaves } from '../../api/leaveAPI'
+import { createLeave } from '../../api/leaveAPI'
 import { useAppContext } from '../../AppContext'
 
 import LeaveDatePicker from './LeaveDatePicker'
@@ -116,12 +115,12 @@ const LeaveForm = ({ isShowLeaveForm }) => {
               <div className="leave-form__item leave-form__block">
                 <div className="leave-form__datepicker">
                   <div className="title">Leave Dates</div>
-                  <LeaveDatePicker selectedDates={leaveDates} />
+                  <LeaveDatePicker disabledDate={leaveDates} />
                 </div>
                 <div className="leave-form__desc">
                   <div className="total-date">
                     <div className="title">Total</div>
-                    <div>
+                    <div className="total-date-body">
                       {dates?.map(item => {
                         let time = ''
 
@@ -154,14 +153,16 @@ const LeaveForm = ({ isShowLeaveForm }) => {
                 </div>
               </div>
 
-              <Button
-                color="primary"
-                type="submit"
-                variant="outlined"
-                disabled={!!Object.keys(errors).length || creatingLeave}
-              >
-                Submit
-              </Button>
+              <div className='leave-form__cta'>
+                <Button
+                  color="primary"
+                  type="submit"
+                  variant="outlined"
+                  disabled={!!Object.keys(errors).length || creatingLeave}
+                >
+                  Submit
+                </Button>
+              </div>
             </form>
           </div>
         )

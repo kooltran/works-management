@@ -214,9 +214,11 @@
       color: #fff;
     }
 
-    .selected {
+    .holiday {
       background: #dddddd;
-      color: #fff;
+      pointer-events: none;
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .row {

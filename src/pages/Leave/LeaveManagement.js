@@ -24,7 +24,7 @@ const style = {
   width: 700,
   bgcolor: 'background.paper',
   borderRadius: 8,
-  height: '90%',
+  height: 'fit-content',
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'auto',

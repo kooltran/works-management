@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { format, startOfMonth, isSameMonth } from 'date-fns'
-import { useAppContext } from '../../AppContext'
-import { WbSunnyOutlined } from '@material-ui/icons'
-import lo from 'lodash'
+import { WbSunny } from '@material-ui/icons'
 
 const DateCell = ({
   chosenDate,
@@ -10,41 +8,23 @@ const DateCell = ({
   handleChangeTime,
   onDateClick,
   currentMonth,
+  holiday,
   day,
 }) => {
-  const {
-    data: {
-      leave: {
-        get: { data: currentLeaveData },
-      },
-    },
-  } = useAppContext()
   const dateFormatted = format(day, 'dd/MM/yyyy')
   const cloneDay = day
   const monthStart = startOfMonth(currentMonth)
+  const currentDate = new Date()
+  const isBefore = day.getTime() < currentDate.getTime()
+  const isHoliday = holiday.includes(dateFormatted) || [0, 6].includes(day.getDay())
 
   const chosen = chosenDate?.find(item => item.date === dateFormatted)
-  let selected = disabledDate?.filter(item => item.date === dateFormatted) || []
-  selected =
-    selected.length === 2 ? { ...selected[0], time: ['am', 'pm'] } : selected[0]
 
-  let leaveStatus = null
-  
-  if (selected && selected.date) {
-    const leaveCurrent = currentLeaveData.find((leave) => {
-      const dates = leave.dates.flat()
-      return dates.some((date) => date.date === selected.date && lo.isEqual(date.time.sort(), selected.time.sort()))
-    })
-    leaveStatus = leaveCurrent.status
-  }
-
-  const sunColor = leaveStatus === 'pending'
-                    ? '#fffb00'
-                    : '#01d830'
+  const sunColor = disabledDate?.status === 'pending' ? '#ff7800' : '#01d830'
 
   const formattedDate = format(day, 'd')
   const [checkedChosenStatus, setCheckedChosenStatus] = useState([])
-  const checkedSelectedStatus = selected ? selected.time : []
+  const checkedSelectedStatus = disabledDate ? disabledDate.time : []
 
   useEffect(() => {
     if (chosen) {
@@ -57,12 +37,12 @@ const DateCell = ({
   return (
     <div
       className={`col cell ${
-        !isSameMonth(day, monthStart)
+        isHoliday
+          ? 'holiday'
+          : !isSameMonth(day, monthStart) || isBefore
           ? 'disabled'
           : chosen
           ? 'chosen'
-          : checkedSelectedStatus.length > 0
-          ? 'selected'
           : ''
       }`}
       onClick={e => onDateClick(e, cloneDay)}
@@ -70,8 +50,8 @@ const DateCell = ({
       <span className="number">{formattedDate}</span>
       <div className="time">
         <span onClick={e => handleChangeTime(e, cloneDay)}>
-          {checkedSelectedStatus.includes('am') && leaveStatus
-            ? (<WbSunnyOutlined style={{ fill: sunColor, fontSize: '17px'}} />)
+          {checkedSelectedStatus.includes('am') && disabledDate && disabledDate.status
+            ? (<WbSunny style={{ fill: sunColor, fontSize: '17px'}} />)
             : (<input
               type="checkbox"
               name="am"
@@ -85,8 +65,8 @@ const DateCell = ({
           }
         </span>
         <span onClick={e => handleChangeTime(e, cloneDay)}>
-          {checkedSelectedStatus.includes('pm') && leaveStatus
-            ? (<WbSunnyOutlined style={{ fill: sunColor, fontSize: '17px'}} />)
+          {checkedSelectedStatus.includes('pm') && disabledDate && disabledDate.status
+            ? (<WbSunny style={{ fill: sunColor, fontSize: '17px'}} />)
             : (<input
                 type="checkbox"
                 name="pm"

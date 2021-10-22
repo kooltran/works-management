@@ -230,7 +230,6 @@ const ProfileForm = ({
     </div>
   )
 
-  const [isLoading, setIsLoading] = useState(false)
   const [projectOption, setProjectoption] = useState(initCreatableOptions)
   const [selectedProjectItem, setProjectItem] = useState(
     initCreatableOptions[0]

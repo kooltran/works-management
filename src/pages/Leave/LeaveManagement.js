@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import classNames from 'classnames'
 import Modal from '@material-ui/core/Modal/'
 import Fade from '@material-ui/core/Fade'
 import Backdrop from '@material-ui/core/Backdrop'

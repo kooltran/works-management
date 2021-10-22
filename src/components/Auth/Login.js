@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { object, string } from 'yup'
 import { Button } from '@material-ui/core'
 import { Formik } from 'formik'
 import { makeStyles } from '@material-ui/core/styles'
 
 import classNames from 'classnames'
-// import "../Auth/Login.scss";
 
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
@@ -17,12 +16,6 @@ import Visibility from '@mui/icons-material/Visibility'
 import EmailIcon from '@mui/icons-material/Email'
 import LoginIcon from '@mui/icons-material/Login'
 
-import {
-  getProfileRequest,
-  getProfileSuccess,
-  getProfileFail,
-} from '../../actions/profileAction'
-import { getProfile } from '../../api/profileAPI'
 import { useAppContext } from '../../AppContext'
 import useAuth from './useAuth'
 import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
@@ -45,15 +38,6 @@ const Schema = object().shape({
     .min(6, 'Password must be at least 6 characters'),
 })
 
-const customStyles = {
-  option: (provided, state) => ({
-    ...provided,
-    borderBottom: '1px solid green',
-    color: state.isSelected ? '#000000' : '#000000',
-    padding: 20,
-  }),
-}
-
 export const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
@@ -70,7 +54,6 @@ export const useStyles = makeStyles(() => ({
     fontFamily: 'Quicksand, sans-serif',
     textAlign: 'center',
     MozBackgroundSize: 'cover',
-    WebkitBackgroundSize: 'cover',
   },
   formContainer: {
     display: 'flex',
@@ -138,22 +121,6 @@ const Login = () => {
     setShowPassword(prev => !prev)
   }
 
-  // const getProfileList = async () => {
-  //   dispatch(getProfileRequest())
-
-  //   try {
-  //     const res = await getProfile()
-  //     dispatch(getProfileSuccess(res.data))
-  //   } catch (err) {
-  //     dispatch(getProfileFail(err.response.data.message || err.message))
-
-  //     setShowAlert({
-  //       type: 'error',
-  //       message: err.response.data.message,
-  //     })
-  //   }
-  // }
-
   const { submitLogin } = useAuth()
 
   const handleSubmitLogin = values => {
@@ -176,12 +143,6 @@ const Login = () => {
           handleBlur,
           values,
         }) => {
-          const checkError = name => {
-            if (touched[name]) {
-              return !!errors[name]
-            }
-          }
-
           return (
             <div className={classes.formContainer}>
               <form className={classes.formLogin} onSubmit={handleSubmit}>

@@ -53,7 +53,7 @@ const TaskForm = ({ activeTab }) => {
   const {
     data: {
       task: {
-        create: { data, loading },
+        create: { loading },
       },
     },
     dispatch,

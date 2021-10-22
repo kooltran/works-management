@@ -34,7 +34,7 @@ const LeaveForm = ({ isShowLeaveForm }) => {
     data: {
       leave: {
         dates,
-        get: { data: leaveData, creating: creatingLeave, fail },
+        get: { data: leaveData, creating: creatingLeave },
       },
     },
     dispatch,
@@ -153,7 +153,7 @@ const LeaveForm = ({ isShowLeaveForm }) => {
                 </div>
               </div>
 
-              <div className='leave-form__cta'>
+              <div className="leave-form__cta">
                 <Button
                   color="primary"
                   type="submit"

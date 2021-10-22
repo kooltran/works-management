@@ -7,7 +7,7 @@ import {
 } from '../../actions/leaveAction'
 import { getCurrentUserLeaves } from '../../api/leaveAPI'
 
-import PageLoading from '../../images/page_loading.svg'
+import PageLoading from '../../components/PageLoading/PageLoading'
 
 import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 import Pill from '../Pill'
@@ -95,9 +95,7 @@ const UserLeaveList = () => {
   return (
     <div>
       {loadingLeaveData ? (
-        <div className="page-loading">
-          <img src={PageLoading} alt="page_loading" />
-        </div>
+        <PageLoading />
       ) : (
         <List
           id="cui-sample-list-sortables"

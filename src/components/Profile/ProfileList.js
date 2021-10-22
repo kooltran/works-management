@@ -15,9 +15,6 @@ import {
   getProfileRequest,
   getProfileSuccess,
   getProfileFail,
-  getCurrentProfileRequest,
-  getCurrentProfileSuccess,
-  getCurrentProfileFail,
   updateProfileRequest,
   updateProfileSuccess,
   updateProfileFail,
@@ -26,18 +23,12 @@ import {
   deleteProfileFail,
 } from '../../actions/profileAction'
 
-import {
-  getProfile,
-  getCurrentProfile,
-  updateProfile,
-  deleteProfile,
-} from '../../api/profileAPI'
+import { getProfile, updateProfile, deleteProfile } from '../../api/profileAPI'
 
-import ProfileItem from './ProfileListItem'
 import List from '../List'
 
 import { useAppContext } from '../../AppContext'
-import { getRole, renderProfileValues } from '../../helpers'
+import { renderProfileValues } from '../../helpers'
 
 import './Profile.scss'
 
@@ -76,7 +67,6 @@ const useStyles = makeStyles(() => ({
 }))
 
 export const ProfileList = () => {
-  const role = getRole()
   const classes = useStyles()
   const [showEditProfile, setShow] = useState(false)
   const [editingProfileItem, setProfileItem] = useState({})
@@ -94,7 +84,6 @@ export const ProfileList = () => {
           deleting,
         },
       },
-      currentProfile: { data: currentProfile, loading: currentProfileLoading },
     },
     dispatch,
   } = useAppContext()

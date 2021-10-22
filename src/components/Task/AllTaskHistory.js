@@ -14,7 +14,7 @@ import TableListHeader from '../Table/TableListHeader'
 import TableListBody from '../Table/TableListBody'
 import TableListItem from '../Table/TableListItem'
 
-import PageLoading from '../../images/page_loading.svg'
+import PageLoading from '../../components/PageLoading/PageLoading'
 
 const AllTaskHistory = () => {
   const {
@@ -80,9 +80,7 @@ const AllTaskHistory = () => {
   return (
     <div className="task-history__all">
       {loading ? (
-        <div className="page-loading">
-          <img src={PageLoading} alt="page_loading" />
-        </div>
+        <PageLoading />
       ) : (
         activeWeekTasks && (
           <>

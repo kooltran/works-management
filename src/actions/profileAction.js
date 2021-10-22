@@ -11,6 +11,9 @@ import {
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_SUCCESS,
   UPDATE_PROFILE_FAIL,
+  DELETE_PROFILE_REQUEST,
+  DELETE_PROFILE_SUCCESS,
+  DELETE_PROFILE_FAIL,
 } from '../constants'
 
 const getProfileRequest = () => ({
@@ -69,6 +72,20 @@ const updateProfileFail = error => ({
   payload: error,
 })
 
+const deleteProfileRequest = () => ({
+  type: DELETE_PROFILE_REQUEST,
+})
+
+const deleteProfileSuccess = payload => ({
+  type: DELETE_PROFILE_SUCCESS,
+  payload,
+})
+
+const deleteProfileFail = error => ({
+  type: DELETE_PROFILE_FAIL,
+  payload: error,
+})
+
 export {
   getProfileRequest,
   getProfileSuccess,
@@ -82,4 +99,7 @@ export {
   updateProfileRequest,
   updateProfileSuccess,
   updateProfileFail,
+  deleteProfileRequest,
+  deleteProfileSuccess,
+  deleteProfileFail,
 }

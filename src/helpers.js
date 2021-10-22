@@ -1,6 +1,9 @@
 import Cookies from 'universal-cookie'
 import { format } from 'date-fns'
 import moment from 'moment'
+import dateFnsFormat from 'date-fns/format'
+import dateFnsParse from 'date-fns/parse'
+import { DateUtils } from 'react-day-picker'
 
 const months = [
   'Jan',
@@ -132,6 +135,23 @@ const convertToLongDate = dateString => {
   return `${day} ${monthName} ${year}`
 }
 
+const renderProfileValues = projectOptionArr =>
+  projectOptionArr.map(item => item.value)
+
+const FORMAT = 'dd/MM/yyyy'
+
+const formatDate = (date, format, locale) => {
+  return dateFnsFormat(date, format, { locale })
+}
+
+const parseDate = (str, format, locale) => {
+  const parsed = dateFnsParse(str, format, new Date(), { locale })
+  if (DateUtils.isDate(parsed)) {
+    return parsed
+  }
+  return undefined
+}
+
 export {
   isEmpty,
   getRole,
@@ -144,4 +164,8 @@ export {
   getWeekRange,
   sortBy,
   convertToLongDate,
+  renderProfileValues,
+  FORMAT,
+  formatDate,
+  parseDate,
 }

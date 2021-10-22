@@ -129,58 +129,36 @@ const Login = () => {
   const helperTextClasses = useHelperTextStyles()
   const [showAlert, setShowAlert] = useState({})
   const {
-    data: {
-      auth,
-      profile: {
-        get: { data: profileData = {}, loading, fail },
-      },
-    },
-    dispatch,
+    data: { auth },
   } = useAppContext()
-  console.log(auth?.data?.error_message, 'failed login')
+
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClick = () => {
     setShowPassword(prev => !prev)
   }
-  const profileOptions =
-    profileData?.map(item => ({
-      value: item.email,
-      label: item.name,
-    })) || []
 
-  const getProfileList = async () => {
-    dispatch(getProfileRequest())
+  // const getProfileList = async () => {
+  //   dispatch(getProfileRequest())
 
-    try {
-      const res = await getProfile()
-      dispatch(getProfileSuccess(res.data))
-    } catch (err) {
-      dispatch(getProfileFail(err.response.data.message || err.message))
+  //   try {
+  //     const res = await getProfile()
+  //     dispatch(getProfileSuccess(res.data))
+  //   } catch (err) {
+  //     dispatch(getProfileFail(err.response.data.message || err.message))
 
-      setShowAlert({
-        type: 'error',
-        message: err.response.data.message,
-      })
-    }
-  }
+  //     setShowAlert({
+  //       type: 'error',
+  //       message: err.response.data.message,
+  //     })
+  //   }
+  // }
 
   const { submitLogin } = useAuth()
 
   const handleSubmitLogin = values => {
     submitLogin(values)
   }
-
-  const handleChangeName = option => {
-    const { setFieldValue } = formRef.current
-    if (option) {
-      setFieldValue('email', option.value)
-    }
-  }
-
-  useEffect(() => {
-    getProfileList()
-  }, [])
 
   return (
     <div className={classes.body}>

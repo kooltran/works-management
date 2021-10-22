@@ -1,15 +1,13 @@
 import React from 'react'
 
 import DayPickerInput from 'react-day-picker/DayPickerInput'
-import { DateUtils } from 'react-day-picker'
-import dateFnsFormat from 'date-fns/format'
-import dateFnsParse from 'date-fns/parse'
 import TextareaAutosize from 'react-textarea-autosize'
 import Select from 'react-select'
 import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined'
 import { format } from 'date-fns'
 
 import TableListItem from '../Table/TableListItem'
+import { FORMAT, formatDate, parseDate } from '../../helpers'
 
 import 'react-day-picker/lib/style.css'
 
@@ -21,8 +19,6 @@ const TaskFormItem = ({
   values,
   selectedDays,
 }) => {
-  const FORMAT = 'dd/MM/yyyy'
-
   const customStyles = {
     control: provided => ({
       ...provided,
@@ -75,18 +71,6 @@ const TaskFormItem = ({
     if (option) {
       setFieldValue(name, option.value)
     }
-  }
-
-  const parseDate = (str, format, locale) => {
-    const parsed = dateFnsParse(str, format, new Date(), { locale })
-    if (DateUtils.isDate(parsed)) {
-      return parsed
-    }
-    return undefined
-  }
-
-  const formatDate = (date, format, locale) => {
-    return dateFnsFormat(date, format, { locale })
   }
 
   return (

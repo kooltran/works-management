@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import CustomButton from '../../components/CustomButton/CustomButton'
 import classNames from 'classnames'
 import Modal from '@material-ui/core/Modal/'
 import Fade from '@material-ui/core/Fade'
@@ -10,6 +9,7 @@ import Add from '@material-ui/icons/Add'
 import { useAppContext } from '../../AppContext'
 import { getRole } from '../../helpers'
 
+import CustomButton from '../../components/CustomButton/CustomButton'
 import LeaveForm from '../../components/Leave/LeaveForm'
 import UserLeaveList from '../../components/Leave/UserLeaveList'
 import LeaveAdmin from '../../components/Leave/LeaveAdmin'

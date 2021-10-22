@@ -14,7 +14,7 @@ import TableList from '../Table/TableList'
 import TableListHeader from '../Table/TableListHeader'
 import TableListBody from '../Table/TableListBody'
 import TableListItem from '../Table/TableListItem'
-import PageLoading from '../../images/page_loading.svg'
+import PageLoading from '../../components/PageLoading/PageLoading'
 
 import { useAppContext } from '../../AppContext'
 
@@ -76,9 +76,7 @@ const TaskHistory = ({ activeTab }) => {
   return (
     <div className="task-wrapper">
       {loading ? (
-        <div className="page-loading">
-          <img src={PageLoading} alt="page_loading" />
-        </div>
+        <PageLoading />
       ) : allTaskByUser?.length > 0 ? (
         <div className="task-history task-list">
           <div className="task-history__header">

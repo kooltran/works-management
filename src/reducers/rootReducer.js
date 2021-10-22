@@ -22,6 +22,11 @@ const authInitState = {
 const profileInitState = {
   get: {
     loading: false,
+    updating: false,
+    deleting: false,
+    creating: false,
+    createFail: null,
+    createSuccess: false,
     data: null,
     fail: null,
   },

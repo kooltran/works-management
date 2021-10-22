@@ -6,8 +6,8 @@ import Fade from '@material-ui/core/Fade'
 import Backdrop from '@material-ui/core/Backdrop'
 import Box from '@material-ui/core/Box'
 
-import PageLoading from '../../images/page_loading.svg'
 import CustomButton from '../../components/CustomButton/CustomButton'
+import PageLoading from '../../components/PageLoading/PageLoading'
 import Pill from '../Pill'
 import UpdatingIcon from '../../images/updating.svg'
 
@@ -162,9 +162,7 @@ const LeaveApprovalList = () => {
   return (
     <div>
       {loading ? (
-        <div className="page-loading">
-          <img src={PageLoading} alt="page_loading" />
-        </div>
+        <PageLoading />
       ) : (
         <List
           id="cui-sample-list-sortables"

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { object, string } from 'yup'
 import { Button } from '@material-ui/core'
 import { Formik } from 'formik'
-import Select from 'react-select'
 import { makeStyles } from '@material-ui/core/styles'
 
 import classNames from 'classnames'
@@ -11,16 +10,12 @@ import classNames from 'classnames'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import LockIcon from '@mui/icons-material/Lock'
-import Input from '@mui/material/Input'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import Visibility from '@mui/icons-material/Visibility'
 import EmailIcon from '@mui/icons-material/Email'
 import LoginIcon from '@mui/icons-material/Login'
-
-// import { ToastContainer, toast } from "material-react-toastify";
-// import "material-react-toastify/dist/ReactToastify.css";
 
 import {
   getProfileRequest,
@@ -132,60 +127,38 @@ const Login = () => {
   const formRef = useRef()
   const classes = useStyles()
   const helperTextClasses = useHelperTextStyles()
-  // const notify = () => toast(`${auth?.data?.user?.error_message}`);
   const [showAlert, setShowAlert] = useState({})
   const {
-    data: {
-      auth,
-      profile: {
-        get: { data: profileData = {}, loading, fail },
-      },
-    },
-    dispatch,
+    data: { auth },
   } = useAppContext()
+
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClick = () => {
     setShowPassword(prev => !prev)
   }
-  const profileOptions =
-    profileData?.map(item => ({
-      value: item.email,
-      label: item.name,
-    })) || []
 
-  const getProfileList = async () => {
-    dispatch(getProfileRequest())
+  // const getProfileList = async () => {
+  //   dispatch(getProfileRequest())
 
-    try {
-      const res = await getProfile()
-      dispatch(getProfileSuccess(res.data))
-    } catch (err) {
-      dispatch(getProfileFail(err.response.data.message || err.message))
+  //   try {
+  //     const res = await getProfile()
+  //     dispatch(getProfileSuccess(res.data))
+  //   } catch (err) {
+  //     dispatch(getProfileFail(err.response.data.message || err.message))
 
-      setShowAlert({
-        type: 'error',
-        message: err.response.data.message,
-      })
-    }
-  }
+  //     setShowAlert({
+  //       type: 'error',
+  //       message: err.response.data.message,
+  //     })
+  //   }
+  // }
 
   const { submitLogin } = useAuth()
 
   const handleSubmitLogin = values => {
     submitLogin(values)
   }
-
-  const handleChangeName = option => {
-    const { setFieldValue } = formRef.current
-    if (option) {
-      setFieldValue('email', option.value)
-    }
-  }
-
-  useEffect(() => {
-    getProfileList()
-  }, [])
 
   return (
     <div className={classes.body}>
@@ -276,6 +249,13 @@ const Login = () => {
                       }}
                     ></TextField>
                   </Box>
+                  <Box>
+                    {
+                      <div className={classes.textDanger}>
+                        {auth?.data?.error_message}
+                      </div>
+                    }
+                  </Box>
                 </div>
                 <Button
                   color="primary"
@@ -285,7 +265,6 @@ const Login = () => {
                   )}
                   type="submit"
                   variant="outlined"
-                  // onClick={notify}
                   disabled={
                     !values.email ||
                     !values.password ||

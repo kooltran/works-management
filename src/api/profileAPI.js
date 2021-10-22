@@ -16,4 +16,14 @@ const deleteProfile = id => {
   return axiosInstance.delete(`/profile/${id}`).then(res => res.data)
 }
 
-export { getProfile, createProfile, deleteProfile, getCurrentProfile }
+const updateProfile = (id, payload) => {
+  return axiosInstance.patch(`/profile/${id}`, payload).then(res => res.data)
+}
+
+export {
+  getProfile,
+  createProfile,
+  deleteProfile,
+  getCurrentProfile,
+  updateProfile,
+}

@@ -1,6 +1,9 @@
+@import '../../styles/mixins.scss';
+
 .profile {
   &-wrapper {
     margin: 40px 20px;
+    height: calc(100% - 144px);
   }
 
   &-action {
@@ -57,6 +60,150 @@
         resize: none;
         padding: 5px;
         outline: none;
+      }
+    }
+  }
+
+  &-form {
+    .DayPickerInput {
+      width: 100%;
+
+      input {
+        width: 100%;
+        height: 36px;
+        border: 0;
+        border-bottom: 1px solid #0fcec3;
+        outline: none;
+        font-size: 16px;
+      }
+    }
+
+    .DayPickerInput-OverlayWrapper {
+      box-shadow: -1px 0px 3px 4px #f0f0f0;
+      border-radius: 4px;
+    }
+
+    .DayPicker-Months {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .DayPickerInput-Overlay {
+      width: 100%;
+    }
+
+    .DayPicker {
+      width: 100%;
+    }
+
+    .DayPicker-Month {
+      width: 100%;
+    }
+
+    .DayPicker-Day {
+      border-radius: 0;
+    }
+
+    &__title {
+      text-transform: capitalize;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 500;
+    }
+
+    .project-dropdown {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #0fcec3;
+    }
+  }
+
+  &-new {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 100%;
+  }
+
+  &-add__btn {
+    display: flex;
+    margin-bottom: 20px;
+    justify-content: flex-end;
+  }
+
+  &-user {
+    padding: 200px 20px 60px;
+    background: #fff;
+    max-width: 400px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 20;
+    border-radius: 10px;
+    @include shadowy;
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: #0fcec3;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      width: 100%;
+      height: 120px;
+      z-index: -1;
+      @include shadowy;
+    }
+
+    &__image {
+      position: absolute;
+      top: calc(120px - 60px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+        border: 3px solid #edebeb;
+      }
+    }
+
+    &__name {
+      font-size: 20px;
+      text-transform: capitalize;
+      text-align: center;
+    }
+
+    &__info {
+      width: 65%;
+      margin: 30px auto 0;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
+
+      li {
+        list-style: square;
+
+        span {
+          position: relative;
+          left: -8px;
+        }
+      }
+
+      .icon {
+        display: flex;
+        margin-right: 15px;
+
+        svg {
+          fill: #0fcec3;
+        }
       }
     }
   }

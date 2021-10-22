@@ -66,13 +66,9 @@ const taskInitState = {
 
 const leaveInitState = {
   dates: [],
-  create: {
-    loading: false,
-    data: null,
-    fail: null,
-  },
   get: {
     loading: false,
+    creating: false,
     data: null,
     fail: null,
   },

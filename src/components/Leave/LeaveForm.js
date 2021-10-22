@@ -34,19 +34,18 @@ const LeaveForm = ({ isShowLeaveForm }) => {
     data: {
       leave: {
         dates,
-        create: { loading: creatingLeave },
-        get: { data: leaveData },
+        get: { data: leaveData, creating: creatingLeave, fail },
       },
     },
     dispatch,
   } = useAppContext()
 
-  const leaveDatesArr = leaveData.map(data => {
+  const leaveDatesArr = leaveData?.map(data => {
     return data.dates
   })
 
-  const leaveDates = leaveDatesArr.flat()
-  console.log(leaveDates, 'leaveDates')
+  const leaveDates = leaveDatesArr?.flat()
+
   const handleChangeLeaveType = name => option => {
     const { setFieldValue } = formRef.current
     setFieldValue(name, option.value)
@@ -64,7 +63,9 @@ const LeaveForm = ({ isShowLeaveForm }) => {
       const data = await createLeave(payload)
       dispatch(createLeaveSuccess(data))
     } catch (err) {
-      dispatch(createLeaveFail(err.message))
+      dispatch(
+        createLeaveFail(err?.response?.data?.error.message || err.message)
+      )
     }
   }
 
@@ -114,12 +115,12 @@ const LeaveForm = ({ isShowLeaveForm }) => {
               <div className="leave-form__item leave-form__block">
                 <div className="leave-form__datepicker">
                   <div className="title">Leave Dates</div>
-                  <LeaveDatePicker selectedDates={leaveDates} />
+                  <LeaveDatePicker disabledDate={leaveDates} />
                 </div>
                 <div className="leave-form__desc">
                   <div className="total-date">
                     <div className="title">Total</div>
-                    <div>
+                    <div className="total-date-body">
                       {dates?.map(item => {
                         let time = ''
 
@@ -152,14 +153,16 @@ const LeaveForm = ({ isShowLeaveForm }) => {
                 </div>
               </div>
 
-              <Button
-                color="primary"
-                type="submit"
-                variant="outlined"
-                disabled={!!Object.keys(errors).length || creatingLeave}
-              >
-                Submit
-              </Button>
+              <div className='leave-form__cta'>
+                <Button
+                  color="primary"
+                  type="submit"
+                  variant="outlined"
+                  disabled={!!Object.keys(errors).length || creatingLeave}
+                >
+                  Submit
+                </Button>
+              </div>
             </form>
           </div>
         )

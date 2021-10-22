@@ -24,7 +24,7 @@ const style = {
   width: 700,
   bgcolor: 'background.paper',
   borderRadius: 8,
-  height: '90%',
+  height: 'fit-content',
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'auto',
@@ -37,21 +37,21 @@ const LeaveManagement = () => {
   const {
     data: {
       leave: {
-        create: { data: createdLeaveData },
+        get: { creating },
       },
     },
   } = useAppContext()
 
   const role = getRole()
 
-  const [showCreateLeaveForm, setShowLeaveForm] = useState(!!createdLeaveData)
+  const [showCreateLeaveForm, setShowLeaveForm] = useState(!!creating)
   const handleCloseLeaveForm = () => setShowLeaveForm(false)
 
   const handleOpenLeaveForm = () => setShowLeaveForm(true)
 
   useEffect(() => {
-    setShowLeaveForm(false)
-  }, [createdLeaveData])
+    setShowLeaveForm(creating)
+  }, [creating])
 
   return (
     <div className="leave-wrapper">
@@ -83,7 +83,7 @@ const LeaveManagement = () => {
             className="leave-modal"
             aria-labelledby="transition-modal-title"
             aria-describedby="transition-modal-description"
-            open={showCreateLeaveForm}
+            open={!!showCreateLeaveForm}
             onClose={handleCloseLeaveForm}
             closeAfterTransition
             BackdropComponent={Backdrop}

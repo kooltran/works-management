@@ -8,7 +8,7 @@ import { CloseOutlined, EditOutlined } from '@material-ui/icons'
 
 import ProfileForm from './ProfileForm'
 import PageLoading from '../../components/PageLoading/PageLoading'
-import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
+import NotificationDialog from '../NotificationDialog/NotificationDialog'
 import CustomButton from '../../components/CustomButton/CustomButton'
 
 import {
@@ -207,18 +207,22 @@ export const ProfileList = () => {
         <PageLoading />
       ) : (
         <List
-          id="profile-list"
+          id="profile-list-admin"
           data={profileListData}
           toggleInnerContent={false}
+          className="profile-list"
           options={{
             styles: {
               'Staff Name': {
-                '--itemWidth': '10%',
+                '--itemWidth': '12%',
               },
               Position: {
                 '--itemWidth': '15%',
               },
               Lead: {
+                '--itemWidth': '10%',
+              },
+              'Start Date': {
                 '--itemWidth': '10%',
               },
               Email: {

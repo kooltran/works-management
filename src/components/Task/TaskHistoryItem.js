@@ -24,8 +24,8 @@ import {
 } from '../../actions/taskAction'
 import TableListItem from '../Table/TableListItem'
 
+import { ERROR_MESSAGE } from '../../constants'
 import { updateTask, deleteTask } from '../../api/taskAPI'
-import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
 import { useAppContext } from '../../AppContext'
 import { dateBetweenRange } from '../../helpers'
 
@@ -103,12 +103,10 @@ const TaskHistoryItem = ({
   const currentWeekTasks =
     allTaskByUser?.find(item => item.isActiveWeek) || null
 
-  const [showAlert, setShowAlert] = useState({})
   const [selectedDate, setSelectedDate] = useState({
     startDate: task.startDate,
     endDate: task.endDate,
   })
-
   const [editStatus, setStatus] = useState(task.status)
   const [taskName, setTaskName] = useState(task.name)
 
@@ -164,8 +162,7 @@ const TaskHistoryItem = ({
       dispatch(deleteTaskSuccess(data))
       dispatch(getAllTaskByUserSuccess(updatedTasks))
     } catch (err) {
-      setShowAlert({ type: 'error', message: err.message })
-      dispatch(deleteTaskFail(err.message))
+      dispatch(deleteTaskFail(ERROR_MESSAGE))
     }
   }
 
@@ -181,8 +178,7 @@ const TaskHistoryItem = ({
       dispatch(updateTaskSuccess(data))
       dispatch(getAllTaskByUserSuccess(updatedTasks))
     } catch (err) {
-      setShowAlert({ type: 'error', message: err.message })
-      dispatch(updateTaskFail(err.message))
+      dispatch(updateTaskFail(ERROR_MESSAGE))
     }
   }
 
@@ -205,20 +201,16 @@ const TaskHistoryItem = ({
       !taskHistoryValues.every(elem => taskUpdateValues.indexOf(elem) > -1)
     ) {
       submitUpdateTask(taskUpdatePayload)
-      setShowAlert({})
     } else {
       const updatedTasks = allTaskByUser.map(item =>
         item._id === itemId
           ? {
               ...item,
-              tasks: item.tasks.map(
-                taskItem =>
-                  console.log(taskItem, 'taskITem') || {
-                    ...taskItem,
-                    isEditing: false,
-                    isShowEdit: true,
-                  }
-              ),
+              tasks: item.tasks.map(taskItem => ({
+                ...taskItem,
+                isEditing: false,
+                isShowEdit: true,
+              })),
             }
           : item
       )
@@ -346,14 +338,6 @@ const TaskHistoryItem = ({
             </span>
           )}
         </TableListItem>
-      )}
-      {showAlert.type && (
-        <NotificationDialog
-          {...showAlert}
-          handleCloseDialog={() => {
-            setShowAlert({})
-          }}
-        />
       )}
     </div>
   )

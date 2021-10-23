@@ -18,8 +18,9 @@ import LoginIcon from '@mui/icons-material/Login'
 
 import { useAppContext } from '../../AppContext'
 import useAuth from './useAuth'
-import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
+import NotificationDialog from '../NotificationDialog/NotificationDialog'
 import { isEmpty } from '../../helpers'
+import UpdatingIcon from '../../images/updating.svg'
 import S3corp from '../../images/logo.svg'
 import imgBG from '../../images/backgroundLogin.jpg'
 
@@ -62,16 +63,15 @@ export const useStyles = makeStyles(() => ({
     alignItems: 'center',
   },
   formLogin: {
-    width: '33rem',
+    width: 350,
     backgroundColor: '#FFFFFF',
     margin: '0 auto',
-    padding: '3rem',
+    padding: '2rem',
     boxShadow: '10px 10px 120px 10px #97ddff9c',
     transition: 'all 0.3s cubic-bezier(.25,.8,.25,1)',
     borderRadius: '1rem',
   },
   btnSubmit: {
-    width: '25%',
     cursor: 'pointer',
     '&::before': {
       content: '',
@@ -84,12 +84,15 @@ export const useStyles = makeStyles(() => ({
     margin: '1rem 0em',
   },
   imgLogin: {
-    width: '15rem',
-    height: '10rem',
+    width: 200,
   },
-  boxChild: {
+  boxChildCenter: {
     display: 'flex',
     alignItems: 'center',
+  },
+  boxChildEnd: {
+    display: 'flex',
+    alignItems: 'flex-end',
   },
   textDanger: {
     color: 'red',
@@ -117,8 +120,8 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleClick = () => {
-    setShowPassword(prev => !prev)
+  const handleShowPwd = () => {
+    setShowPassword(!showPassword)
   }
 
   const { submitLogin } = useAuth()
@@ -149,9 +152,15 @@ const Login = () => {
                 <img className={classes.imgLogin} src={S3corp} alt="S3Login" />
 
                 <div>
-                  <Box className={classes.boxChild}>
+                  <Box
+                    className={
+                      touched.email && errors.email
+                        ? classes.boxChildCenter
+                        : classes.boxChildEnd
+                    }
+                  >
                     <div>
-                      <EmailIcon sx={{ fill: 'red', mr: 1, my: 0.5 }} />
+                      <EmailIcon sx={{ fill: '#0FCEC3', mr: 1, my: 0.5 }} />
                     </div>
                     <TextField
                       fullWidth
@@ -174,13 +183,19 @@ const Login = () => {
                   </Box>
                 </div>
                 <div className={classes.marginComponentChid}>
-                  <Box className={classes.boxChild}>
+                  <Box
+                    className={
+                      touched.password && errors.password
+                        ? classes.boxChildCenter
+                        : classes.boxChildEnd
+                    }
+                  >
                     <div>
-                      <LockIcon sx={{ fill: '#ff7000', mr: 1, my: 0.5 }} />
+                      <LockIcon sx={{ fill: '#0FCEC3', mr: 1, my: 0.5 }} />
                     </div>
                     <TextField
                       fullWidth
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       id="input-with-sx"
                       name="password"
                       label="Password"
@@ -198,7 +213,7 @@ const Login = () => {
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
-                            <IconButton onClick={handleClick} edge="end">
+                            <IconButton onClick={handleShowPwd} edge="end">
                               {showPassword ? (
                                 <Visibility sx={{ fill: '#1da1f287' }} />
                               ) : (
@@ -234,7 +249,11 @@ const Login = () => {
                   }
                 >
                   Login
-                  <LoginIcon sx={{ marginLeft: '0.7rem', width: '1rem' }} />
+                  {auth.loading ? (
+                    <img src={UpdatingIcon} alt="logining" />
+                  ) : (
+                    <LoginIcon sx={{ marginLeft: '0.7rem', width: '1rem' }} />
+                  )}
                 </Button>
               </form>
             </div>

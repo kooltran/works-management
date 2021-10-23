@@ -48,6 +48,8 @@ const taskInitState = {
     loading: false,
     updating: false,
     deleting: false,
+    updatedFail: null,
+    deletedFail: null,
     data: null,
     fail: null,
   },
@@ -69,6 +71,7 @@ const leaveInitState = {
   get: {
     loading: false,
     creating: false,
+    createdFail: false,
     data: null,
     fail: null,
   },

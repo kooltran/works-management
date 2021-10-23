@@ -1,22 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { TextField, Button } from '@material-ui/core'
 import { Formik } from 'formik'
 import { object, string } from 'yup'
-import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
-
-import {
-  getProfileRequest,
-  getProfileSuccess,
-  getProfileFail,
-} from '../../actions/profileAction'
-import { getProfile } from '../../api/profileAPI'
-import { isEmpty } from '../../helpers'
-import { useAppContext } from '../../AppContext'
-import { useStyles, useHelperTextStyles } from './Login'
-import useAuth from './useAuth'
-import classNames from 'classnames'
-
-import S3corp from '../../images/logo.svg'
 import Box from '@mui/material/Box'
 import EmailIcon from '@mui/icons-material/Email'
 import LockIcon from '@mui/icons-material/Lock'
@@ -25,6 +10,16 @@ import IconButton from '@mui/material/IconButton'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import Visibility from '@mui/icons-material/Visibility'
 import LoginIcon from '@mui/icons-material/Login'
+
+import NotificationDialog from '../NotificationDialog/NotificationDialog'
+import { isEmpty } from '../../helpers'
+import { useAppContext } from '../../AppContext'
+import { useStyles, useHelperTextStyles } from './Login'
+import useAuth from './useAuth'
+import classNames from 'classnames'
+
+import S3corp from '../../images/logo.svg'
+import UpdatingIcon from '../../images/updating.svg'
 
 const Schema = object().shape({
   email: string()
@@ -48,29 +43,12 @@ const Register = () => {
   const formRef = useRef()
   const {
     data: { auth },
-    dispatch,
   } = useAppContext()
 
   const [showPassword, setShowPassword] = useState(false)
 
   const handleClick = () => {
-    setShowPassword(prev => !prev)
-  }
-
-  const getProfileList = async () => {
-    dispatch(getProfileRequest())
-
-    try {
-      const res = await getProfile()
-      dispatch(getProfileSuccess(res.data))
-    } catch (err) {
-      dispatch(getProfileFail(err.response.data.message || err.message))
-
-      setShowAlert({
-        type: 'error',
-        message: err.response.data.message,
-      })
-    }
+    setShowPassword(!showPassword)
   }
 
   const { submitRegister } = useAuth()
@@ -78,10 +56,6 @@ const Register = () => {
   const handleSubmitRegister = values => {
     submitRegister(values)
   }
-
-  useEffect(() => {
-    getProfileList()
-  }, [])
 
   return (
     <div className={classes.body}>
@@ -105,9 +79,15 @@ const Register = () => {
                 <img className={classes.imgLogin} src={S3corp} alt="S3Login" />
 
                 <div>
-                  <Box className={classes.boxChild}>
+                  <Box
+                    className={
+                      touched.email && errors.email
+                        ? classes.boxChildCenter
+                        : classes.boxChildEnd
+                    }
+                  >
                     <div>
-                      <EmailIcon sx={{ fill: 'red', mr: 1, my: 0.5 }} />
+                      <EmailIcon sx={{ fill: '#0FCEC3', mr: 1, my: 0.5 }} />
                     </div>
                     <TextField
                       fullWidth
@@ -130,13 +110,19 @@ const Register = () => {
                   </Box>
                 </div>
                 <div className={classes.marginComponentChid}>
-                  <Box className={classes.boxChild}>
+                  <Box
+                    className={
+                      touched.password && errors.password
+                        ? classes.boxChildCenter
+                        : classes.boxChildEnd
+                    }
+                  >
                     <div>
-                      <LockIcon sx={{ fill: '#ff7000', mr: 1, my: 0.5 }} />
+                      <LockIcon sx={{ fill: '#0FCEC3', mr: 1, my: 0.5 }} />
                     </div>
                     <TextField
                       fullWidth
-                      type="password"
+                      type={showPassword ? 'text' : 'password'}
                       id="input-with-sx"
                       name="password"
                       label="Password"
@@ -190,7 +176,11 @@ const Register = () => {
                   }
                 >
                   Register
-                  <LoginIcon sx={{ marginLeft: '0.7rem', width: '1rem' }} />
+                  {auth.loading ? (
+                    <img src={UpdatingIcon} alt="logining" />
+                  ) : (
+                    <LoginIcon sx={{ marginLeft: '0.7rem', width: '1rem' }} />
+                  )}
                 </Button>
               </form>
             </div>

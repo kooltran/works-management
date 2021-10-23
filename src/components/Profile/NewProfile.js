@@ -12,7 +12,7 @@ const NewProfile = () => {
   const {
     data: {
       profile: {
-        get: { createFail },
+        get: { createFail, creating },
       },
     },
     dispatch,
@@ -41,7 +41,7 @@ const NewProfile = () => {
     <div className="profile-new">
       <ProfileForm
         initCreatableOptions={[]}
-        isDisabled={false}
+        isDisabled={creating}
         profileValues={{
           name: '',
           position: '',

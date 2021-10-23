@@ -5,7 +5,7 @@ import { Formik } from 'formik'
 import DayPicker from 'react-day-picker'
 import moment from 'moment'
 
-import NotificationDialog from '../../components/NotificationDialog/NotificatinoDialog'
+import NotificationDialog from '../../components/NotificationDialog/NotificationDialog'
 import CustomButton from '../CustomButton/CustomButton'
 import { createTask } from '../../api/taskAPI'
 import {
@@ -15,6 +15,7 @@ import {
   setActiveTask,
 } from '../../actions/taskAction'
 import { useAppContext } from '../../AppContext'
+import { ERROR_MESSAGE } from '../../constants'
 
 import TableList from '../Table/TableList'
 import TableListHeader from '../Table/TableListHeader'
@@ -105,8 +106,8 @@ const TaskForm = ({ activeTab }) => {
       dispatch(createTaskSuccess(data))
       dispatch(setActiveTask('task-history'))
     } catch (err) {
-      setShowAlert({ type: 'error', message: 'error.message' })
-      dispatch(createTaskFail(err))
+      setShowAlert({ type: 'error', message: ERROR_MESSAGE })
+      dispatch(createTaskFail(ERROR_MESSAGE))
     }
   }
 

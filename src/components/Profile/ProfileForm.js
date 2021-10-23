@@ -118,7 +118,7 @@ const useHelperTextStyles = makeStyles(() => ({
       paddingLeft: 0,
     },
     '& .MuiInput-underline:before': {
-      borderBottom: '1px solid #0FCEC3',
+      borderBottom: '1px solid #ccc',
     },
     '& .MuiInput-underline:after': {
       borderBottom: '1px solid rgb(6 111 105)',

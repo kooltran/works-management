@@ -29,6 +29,7 @@ export const leaveReducer = (state, action) => {
         ...state,
         get: {
           loading: true,
+          createdFail: null,
           data: null,
           fail: null,
         },
@@ -39,6 +40,7 @@ export const leaveReducer = (state, action) => {
         get: {
           loading: false,
           data: action.payload,
+          createdFail: null,
           fail: null,
         },
       }
@@ -48,6 +50,7 @@ export const leaveReducer = (state, action) => {
         get: {
           loading: false,
           data: null,
+          createdFail: null,
           fail: action.payload,
         },
       }
@@ -57,6 +60,7 @@ export const leaveReducer = (state, action) => {
         get: {
           ...state.get,
           creating: true,
+          createdFail: null,
         },
       }
     case CREATE_LEAVE_SUCCESS:
@@ -68,7 +72,7 @@ export const leaveReducer = (state, action) => {
           ...state.get,
           creating: false,
           data: createdLeaves,
-          fail: null,
+          createdFail: null,
         },
       }
     case CREATE_LEAVE_FAIL:
@@ -77,7 +81,7 @@ export const leaveReducer = (state, action) => {
         get: {
           ...state.get,
           creating: false,
-          fail: action.payload,
+          createdFail: action.payload,
         },
       }
     case GET_ALL_LEAVE_REQUEST:

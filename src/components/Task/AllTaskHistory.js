@@ -97,8 +97,8 @@ const AllTaskHistory = () => {
               </TableListHeader>
               <TableListBody>
                 {activeWeekTasks.tasksOfUser.map(item => (
-                  <div key={item.user._id} className="table-list__body--row">
-                    <TableListItem>{item.user.name}</TableListItem>
+                  <div key={item?.user?._id} className="table-list__body--row">
+                    <TableListItem>{item?.user?.name}</TableListItem>
                     <TableListItem>
                       <ul className="task-names">
                         {item.tasks.map(task => (

@@ -12,6 +12,9 @@ import {
   DELETE_TASK_REQUEST,
   DELETE_TASK_SUCCESS,
   DELETE_TASK_FAIL,
+  CREATE_TASK_REQUEST,
+  CREATE_TASK_SUCCESS,
+  CREATE_TASK_FAIL,
   RESET_GET_TASKS,
 } from '../constants'
 
@@ -23,6 +26,8 @@ export const taskReducer = (state, action) => {
         get: {
           ...state.get,
           loading: true,
+          updatedFail: null,
+          deletedFail: null,
           data: null,
           fail: null,
         },
@@ -33,6 +38,8 @@ export const taskReducer = (state, action) => {
         get: {
           ...state.get,
           loading: false,
+          updatedFail: null,
+          deletedFail: null,
           data: action.payload,
           fail: null,
         },
@@ -43,6 +50,8 @@ export const taskReducer = (state, action) => {
         get: {
           ...state.get,
           loading: false,
+          updatedFail: null,
+          deletedFail: null,
           data: null,
           fail: action.payload,
         },
@@ -53,7 +62,7 @@ export const taskReducer = (state, action) => {
         get: {
           ...state.get,
           updating: true,
-          fail: null,
+          updatedFail: null,
         },
       }
     case UPDATE_TASK_SUCCESS:
@@ -67,7 +76,7 @@ export const taskReducer = (state, action) => {
           ...state.get,
           updating: false,
           data: updatedTasks,
-          fail: null,
+          updatedFail: null,
         },
       }
     case UPDATE_TASK_FAIL:
@@ -77,7 +86,7 @@ export const taskReducer = (state, action) => {
           ...state.get,
           updating: false,
           data: null,
-          fail: action.payload,
+          updatedFail: action.payload,
         },
       }
     case DELETE_TASK_REQUEST:
@@ -86,6 +95,7 @@ export const taskReducer = (state, action) => {
         get: {
           ...state.get,
           deleting: true,
+          deletedFail: null,
           fail: null,
         },
       }
@@ -99,6 +109,7 @@ export const taskReducer = (state, action) => {
         get: {
           ...state.get,
           deleting: false,
+          deletedFail: null,
           data: deletedTasks,
           fail: null,
         },
@@ -110,7 +121,7 @@ export const taskReducer = (state, action) => {
           ...state.get,
           deleting: false,
           data: null,
-          fail: action.payload,
+          deletedFail: action.payload,
         },
       }
     case SET_ACTIVE_TASK_TAB: {
@@ -144,6 +155,36 @@ export const taskReducer = (state, action) => {
         ...state,
         all: {
           ...state.all,
+          loading: false,
+          data: null,
+          fail: action.payload,
+        },
+      }
+    case CREATE_TASK_REQUEST:
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          loading: true,
+          data: null,
+          fail: null,
+        },
+      }
+    case CREATE_TASK_SUCCESS:
+      return {
+        ...state,
+        create: {
+          ...state.create,
+          loading: false,
+          data: action.payload,
+          fail: null,
+        },
+      }
+    case CREATE_TASK_FAIL:
+      return {
+        ...state,
+        create: {
+          ...state.create,
           loading: false,
           data: null,
           fail: action.payload,

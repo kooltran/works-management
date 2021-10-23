@@ -4,7 +4,7 @@ import { Alert } from '@material-ui/lab'
 import CloseIcon from '@material-ui/icons/Close'
 import { IconButton, Slide } from '@material-ui/core'
 
-import './NotificatinoDialog.scss'
+import './NotificationDialog.scss'
 
 const NotificationDialog = ({ type, message, handleCloseDialog }) => {
   return (

@@ -84,7 +84,6 @@ const LeaveApprovalList = () => {
       dispatch(deleteLeaveFail(err.message))
     }
   }
-
   const listData = allLeaveList?.map(item => {
     const dates = item.dates
       .map(d => (d.time.length === 2 ? d.date : `${d.date}(${d.time[0]})`))
@@ -108,7 +107,7 @@ const LeaveApprovalList = () => {
     }
 
     return {
-      Name: item.user.name,
+      Name: item?.user?.name,
       Date: dates.join(', '),
       'Duration (days)': duration,
       Type: item.type,

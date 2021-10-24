@@ -22,7 +22,7 @@ import { useAppContext } from '../../AppContext'
 import DateCell from './DateCell'
 import './styles.scss'
 
-const LeaveDatePicker = ({ disabledDate }) => {
+const LeaveDatePicker = ({ disabledDates }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [rows, setRows] = useState([])
   const [months, setMonth] = useState([])
@@ -37,16 +37,7 @@ const LeaveDatePicker = ({ disabledDate }) => {
     '24/12/2021',
   ]
 
-  const 
-  { 
-    _,
-    data: {
-      leave: {
-        get: { data: currentLeaveData },
-      },
-    },
-    dispatch 
-  } = useAppContext()
+  const { _, dispatch } = useAppContext()
 
   const handleShowMonths = () => {
     setShowMonths(!showMonths)
@@ -153,17 +144,21 @@ const LeaveDatePicker = ({ disabledDate }) => {
             <div key={idx} className="row">
               {row?.map(day => {
                 const dateFormatted = format(day, 'dd/MM/yyyy')
-                const disabled = handleDisabledDate(dateFormatted)
-                return (<DateCell
-                  key={day}
-                  chosenDate={chosenDate}
-                  holiday={holiday}
-                  disabledDate={disabled}
-                  handleChangeTime={handleChangeTime}
-                  onDateClick={handleDayClick}
-                  currentMonth={currentMonth}
-                  day={day}
-                />)
+                const disabledDate = disabledDates.find(
+                  item => item.date === dateFormatted
+                )
+                return (
+                  <DateCell
+                    key={day}
+                    chosenDate={chosenDate}
+                    holiday={holiday}
+                    disabledDate={disabledDate}
+                    handleChangeTime={handleChangeTime}
+                    onDateClick={handleDayClick}
+                    currentMonth={currentMonth}
+                    day={day}
+                  />
+                )
               })}
             </div>
           )
@@ -176,42 +171,17 @@ const LeaveDatePicker = ({ disabledDate }) => {
     const dateFormatted = format(day, 'dd/MM/yyyy')
     e.preventDefault()
 
-    const disabled = handleDisabledDate(dateFormatted)
-
-    if (!disabled || disabled?.time.length === 1) {
-      if (!chosenDate.find(item => item.date === dateFormatted)) {
-        const time = disabled ? (disabled.time[0] === 'am' ? ['pm'] : ['am']) : null
-        setChosenDate([
-          ...chosenDate,
-          { date: dateFormatted, time: time || ['am', 'pm'] },
-        ])
-      } else {
-        const filterChosenDate = chosenDate.filter(
-          item => item.date !== dateFormatted
-        )
-        setChosenDate(filterChosenDate)
-      }
+    if (!chosenDate.find(item => item.date === dateFormatted)) {
+      setChosenDate([
+        ...chosenDate,
+        { date: dateFormatted, time: ['am', 'pm'] },
+      ])
+    } else {
+      const filterChosenDate = chosenDate.filter(
+        item => item.date !== dateFormatted
+      )
+      setChosenDate(filterChosenDate)
     }
-  }
-
-  const handleDisabledDate = (dateFormatted) => {
-    let leaveStatus = null
-    let disabled = disabledDate?.filter(item => item.date === dateFormatted) || []
-    disabled =
-      disabled.length === 2 ? { ...disabled[0], time: ['am', 'pm'] } : disabled[0]
-    
-    if (disabled && disabled.date) {
-      const leaveCurrent = currentLeaveData.find((leave) => {
-            const dates = leave.dates.flat()
-            return dates.some((date) => 
-              date.date === disabled.date 
-              && disabled.time.sort().every((time, idx) => time === date.time.sort()[idx])
-            )
-          })
-      leaveStatus = leaveCurrent ? leaveCurrent.status : null
-      disabled.status = leaveStatus
-    }
-    return disabled
   }
 
   const nextMonth = () => {
@@ -254,7 +224,7 @@ const LeaveDatePicker = ({ disabledDate }) => {
 
   useEffect(() => {
     dispatch(setDatesLeave(chosenDate))
-  }, [chosenDate])
+  }, [chosenDate, dispatch])
 
   return (
     <div className="cui-calendar">

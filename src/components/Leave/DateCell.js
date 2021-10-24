@@ -16,15 +16,19 @@ const DateCell = ({
   const monthStart = startOfMonth(currentMonth)
   const currentDate = new Date()
   const isBefore = day.getTime() < currentDate.getTime()
-  const isHoliday = holiday.includes(dateFormatted) || [0, 6].includes(day.getDay())
+  const isHoliday =
+    holiday.includes(dateFormatted) || [0, 6].includes(day.getDay())
 
   const chosen = chosenDate?.find(item => item.date === dateFormatted)
 
-  const sunColor = disabledDate?.status === 'pending' ? '#ff7800' : '#01d830'
+  const sunColor = status => (status === 'pending' ? '#ff7800' : '#01d830')
 
   const formattedDate = format(day, 'd')
   const [checkedChosenStatus, setCheckedChosenStatus] = useState([])
   const checkedSelectedStatus = disabledDate ? disabledDate.time : []
+
+  const amTime = checkedSelectedStatus.find(t => t.label === 'am')
+  const pmTime = checkedSelectedStatus.find(t => t.label === 'pm')
 
   useEffect(() => {
     if (chosen) {
@@ -50,34 +54,40 @@ const DateCell = ({
       <span className="number">{formattedDate}</span>
       <div className="time">
         <span onClick={e => handleChangeTime(e, cloneDay)}>
-          {checkedSelectedStatus.includes('am') && disabledDate && disabledDate.status
-            ? (<WbSunny style={{ fill: sunColor, fontSize: '17px'}} />)
-            : (<input
+          {amTime ? (
+            <WbSunny
+              style={{
+                fill: sunColor(amTime.status),
+                fontSize: '17px',
+              }}
+            />
+          ) : (
+            <input
               type="checkbox"
               name="am"
-              checked={
-                checkedChosenStatus.includes('am') ||
-                checkedSelectedStatus.includes('am')
-              }
+              checked={checkedChosenStatus.includes('am')}
               readOnly
               disabled={checkedSelectedStatus.includes('am')}
-            />)
-          }
+            />
+          )}
         </span>
         <span onClick={e => handleChangeTime(e, cloneDay)}>
-          {checkedSelectedStatus.includes('pm') && disabledDate && disabledDate.status
-            ? (<WbSunny style={{ fill: sunColor, fontSize: '17px'}} />)
-            : (<input
-                type="checkbox"
-                name="pm"
-                checked={
-                  checkedChosenStatus.includes('pm') ||
-                  checkedSelectedStatus.includes('pm')
-                }
-                readOnly
-                disabled={checkedSelectedStatus.includes('pm')}
-              />)
-          }
+          {pmTime ? (
+            <WbSunny
+              style={{
+                fill: sunColor(pmTime.status),
+                fontSize: '17px',
+              }}
+            />
+          ) : (
+            <input
+              type="checkbox"
+              name="pm"
+              checked={checkedChosenStatus.includes('pm')}
+              readOnly
+              disabled={checkedSelectedStatus.includes('pm')}
+            />
+          )}
         </span>
       </div>
     </div>

@@ -165,7 +165,7 @@ const Login = () => {
                     <TextField
                       fullWidth
                       type="email"
-                      id="input-with-sx"
+                      id="login-email"
                       name="email"
                       label="Email"
                       defaultValue=""
@@ -196,7 +196,7 @@ const Login = () => {
                     <TextField
                       fullWidth
                       type={showPassword ? 'text' : 'password'}
-                      id="input-with-sx"
+                      id="login-password"
                       name="password"
                       label="Password"
                       defaultValue=""

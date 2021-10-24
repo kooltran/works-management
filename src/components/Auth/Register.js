@@ -92,7 +92,7 @@ const Register = () => {
                     <TextField
                       fullWidth
                       type="email"
-                      id="input-with-sx"
+                      id="register-email"
                       name="email"
                       label="Email"
                       defaultValue=""
@@ -123,7 +123,7 @@ const Register = () => {
                     <TextField
                       fullWidth
                       type={showPassword ? 'text' : 'password'}
-                      id="input-with-sx"
+                      id="register-password"
                       name="password"
                       label="Password"
                       defaultValue=""

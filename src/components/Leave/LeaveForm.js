@@ -26,7 +26,7 @@ const leaveTypeOptions = [
   { label: 'Sick Leave', value: 'sick-leave' },
 ]
 
-const LeaveForm = ({ isShowLeaveForm }) => {
+const LeaveForm = () => {
   const formRef = useRef()
 
   const [selectedLeaveType, setType] = useState(leaveTypeOptions[0])
@@ -41,10 +41,29 @@ const LeaveForm = ({ isShowLeaveForm }) => {
   } = useAppContext()
 
   const leaveDatesArr = leaveData?.map(data => {
-    return data.dates
+    return data.dates.map(item => ({ ...item, status: data.status }))
   })
 
-  const leaveDates = leaveDatesArr?.flat()
+  const leaveDates =
+    leaveDatesArr?.flat().map(leave => ({
+      date: leave.date,
+      time: leave.time.map(t => ({ label: t, status: leave.status })),
+    })) || []
+
+  const disabledDates = leaveDates?.reduce((unique, item) => {
+    if (unique.find(data => data.date === item.date)) {
+      return unique.map(data =>
+        data.date === item.date
+          ? {
+              ...data,
+              time: [...data.time, ...item.time],
+            }
+          : data
+      )
+    } else {
+      return [...unique, item]
+    }
+  }, [])
 
   const handleChangeLeaveType = name => option => {
     const { setFieldValue } = formRef.current
@@ -115,7 +134,7 @@ const LeaveForm = ({ isShowLeaveForm }) => {
               <div className="leave-form__item leave-form__block">
                 <div className="leave-form__datepicker">
                   <div className="title">Leave Dates</div>
-                  <LeaveDatePicker disabledDate={leaveDates} />
+                  <LeaveDatePicker disabledDates={disabledDates} />
                 </div>
                 <div className="leave-form__desc">
                   <div className="total-date">
